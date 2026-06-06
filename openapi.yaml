@@ -1,0 +1,606 @@
+openapi: 3.0.3
+info:
+  title: Intent Backend Service
+  version: 0.0.1
+  description: API documentation for the Intent Backend Service
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+tags:
+  - name: Auth
+    description: Authentication and OTP flows
+  - name: Users
+    description: User account management
+  - name: Goals
+    description: Saving goals management
+
+paths:
+  /api/v1/users:
+    post:
+      tags:
+        - Users
+      summary: Create a user account
+      description: >
+        Provisions a user account for the authenticated phone number.
+        The phone number is extracted from the JWT token issued after OTP
+        verification. Returns 409 if an account already exists for that number.
+      operationId: createUser
+      responses:
+        '201':
+          description: User account created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+              example:
+                id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                phoneNumber: "+919876543210"
+                active: true
+                createdAt: '2026-06-04T10:30:00Z'
+        '401':
+          description: Unauthorized — missing or invalid JWT token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 401
+                error: Unauthorized
+                message: Full authentication is required to access this resource
+        '409':
+          description: Conflict — account already exists for this phone number
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 409
+                error: Conflict
+                message: An account already exists for this phone number
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 500
+                error: Internal Server Error
+                message: An unexpected error occurred
+
+  /api/v1/goals:
+    get:
+      tags:
+        - Goals
+      summary: List saving goals
+      description: >
+        Returns all saving goals for the authenticated user, ordered by
+        creation date descending. Optionally filter by status.
+      operationId: listGoals
+      parameters:
+        - name: filter
+          in: query
+          required: false
+          description: >
+            Filter expression supporting comparison and logical operators.
+
+
+            **Grammar**
+
+            ```
+
+            expr       = term ( ("and" | "or") term )*
+
+            term       = field operator value | "(" expr ")"
+
+            operator   = "eq" | "neq"
+
+            field      = "status" | "currency"
+
+            value      = bare word (no quotes)
+
+            ```
+
+            Operator precedence follows standard rules — `and` binds tighter than `or`.
+            Use parentheses to override.
+
+
+            **Supported fields**
+
+            | Field      | Type   | Allowed values                        |
+
+            |------------|--------|---------------------------------------|
+
+            | `status`   | enum   | `ACTIVE`, `COMPLETED`, `CANCELLED`    |
+
+            | `currency` | string | ISO 4217 code, e.g. `INR`, `USD`     |
+
+
+            **Examples**
+
+            - `status eq ACTIVE`
+
+            - `status neq CANCELLED`
+
+            - `status eq ACTIVE and currency eq INR`
+
+            - `status eq ACTIVE or status eq COMPLETED`
+
+            - `(status eq ACTIVE or status eq COMPLETED) and currency eq INR`
+          schema:
+            type: string
+          example: status eq ACTIVE and currency eq INR
+        - name: token
+          in: query
+          required: false
+          description: >
+            Opaque pagination cursor returned in `paging.nextToken` or
+            `paging.previousToken` from a previous response. Omit to fetch
+            the first page.
+          schema:
+            type: string
+        - name: size
+          in: query
+          required: false
+          description: Number of goals per page. Capped at 100.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Goals retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoalListResponse'
+              example:
+                data:
+                  - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    name: Emergency Fund
+                    targetAmount: 50000.00
+                    currentAmount: 12000.00
+                    currency: INR
+                    targetDate: '2026-12-31'
+                    notes: 6 months of living expenses
+                    status: ACTIVE
+                    createdAt: '2026-06-04T10:30:00Z'
+                paging:
+                  currentToken: eyJjcmVhdGVkQXQiOiIyMDI2LTA2LTA0VDEwOjMwOjAwWiIsImlkIjoiM2ZhODVmNjQifQ==
+                  nextToken: eyJjcmVhdGVkQXQiOiIyMDI2LTA1LTAxVDA4OjAwOjAwWiIsImlkIjoiOWFiMTJjMzQifQ==
+                  previousToken: null
+        '400':
+          description: Invalid filter expression
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                error: Bad Request
+                message: "Invalid filter expression: unexpected token 'ACTIVE' at position 10"
+        '401':
+          description: Unauthorized — missing or invalid JWT token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 401
+                error: Unauthorized
+                message: Full authentication is required to access this resource
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 500
+                error: Internal Server Error
+                message: An unexpected error occurred
+
+    post:
+      tags:
+        - Goals
+      summary: Create a new saving goal
+      description: >
+        Creates a saving goal for the authenticated user. The goal starts with
+        a current amount of zero and a status of ACTIVE.
+      operationId: createGoal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGoalRequest'
+            example:
+              name: Emergency Fund
+              targetAmount: 50000.00
+              currency: INR
+              targetDate: '2026-12-31'
+              notes: 6 months of living expenses
+      responses:
+        '201':
+          description: Goal created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoalResponse'
+              example:
+                id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                name: Emergency Fund
+                targetAmount: 50000.00
+                currentAmount: 0.00
+                currency: INR
+                targetDate: '2026-12-31'
+                notes: 6 months of living expenses
+                status: ACTIVE
+                createdAt: '2026-06-04T10:30:00Z'
+        '400':
+          description: Validation error — missing or invalid fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                error: Bad Request
+                message: targetAmount must be greater than or equal to 1
+        '401':
+          description: Unauthorized — missing or invalid JWT token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 401
+                error: Unauthorized
+                message: Full authentication is required to access this resource
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 500
+                error: Internal Server Error
+                message: An unexpected error occurred
+
+  /api/v1/auth/send-otp:
+    post:
+      tags:
+        - Auth
+      summary: Send OTP to a mobile number
+      description: >
+        Sends a one-time password (OTP) via SMS to the provided phone number.
+        The OTP is valid for a limited time and can only be used once.
+      operationId: sendOtp
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendOtpRequest'
+            example:
+              phoneNumber: "+919876543210"
+      responses:
+        '200':
+          description: OTP sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendOtpResponse'
+              example:
+                message: OTP sent successfully
+        '400':
+          description: Invalid request — phone number missing or malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                error: Bad Request
+                message: "phoneNumber must be a valid E.164 formatted number"
+        '429':
+          description: Too many OTP requests — rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 429
+                error: Too Many Requests
+                message: "OTP request limit exceeded. Please try again after 60 seconds."
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 500
+                error: Internal Server Error
+                message: "An unexpected error occurred"
+
+  /api/v1/auth/verify-otp:
+    post:
+      tags:
+        - Auth
+      summary: Verify OTP entered by the user
+      description: >
+        Verifies the OTP sent to the user's phone number. On success, returns
+        a JWT token to be used for authenticated requests.
+      operationId: verifyOtp
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyOtpRequest'
+            example:
+              phoneNumber: "+919876543210"
+              otp: "482910"
+      responses:
+        '200':
+          description: OTP verified successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifyOtpResponse'
+              example:
+                message: OTP verified successfully
+        '400':
+          description: Invalid or expired OTP
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                error: Bad Request
+                message: Invalid OTP. Please try again.
+        '429':
+          description: Too many verification attempts — rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 429
+                error: Too Many Requests
+                message: "OTP verification limit exceeded. Please try again after 60 seconds."
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 500
+                error: Internal Server Error
+                message: "An unexpected error occurred"
+
+components:
+  schemas:
+    SendOtpRequest:
+      type: object
+      required:
+        - phoneNumber
+      properties:
+        phoneNumber:
+          type: string
+          description: Mobile number in E.164 format
+          pattern: '^\+[1-9]\d{7,14}$'
+          example: "+919876543210"
+
+    SendOtpResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: OTP sent successfully
+
+    VerifyOtpRequest:
+      type: object
+      required:
+        - phoneNumber
+        - otp
+      properties:
+        phoneNumber:
+          type: string
+          description: Mobile number in E.164 format
+          pattern: '^\+[1-9]\d{7,14}$'
+          example: "+919876543210"
+        otp:
+          type: string
+          description: 6-digit OTP received via SMS
+          pattern: '^\d{6}$'
+          example: "482910"
+
+    VerifyOtpResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: OTP verified successfully
+        token:
+          type: string
+          description: JWT bearer token for authenticated requests
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the user
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+        phoneNumber:
+          type: string
+          description: Mobile number in E.164 format
+          example: "+919876543210"
+        active:
+          type: boolean
+          description: Whether the account is active
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the account was created
+          example: '2026-06-04T10:30:00Z'
+
+    PagedResponse:
+      type: object
+      description: >
+        Base schema for all paginated list responses. Every list API extends
+        this via allOf and adds a typed `data` array.
+      properties:
+        paging:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - paging
+
+    PageInfo:
+      type: object
+      properties:
+        currentToken:
+          type: string
+          description: Opaque cursor identifying the current page position
+          example: eyJjcmVhdGVkQXQiOiIyMDI2LTA2LTA0VDEwOjMwOjAwWiIsImlkIjoiM2ZhODVmNjQifQ==
+        nextToken:
+          type: string
+          nullable: true
+          description: Cursor for the next page. Null when this is the last page.
+          example: eyJjcmVhdGVkQXQiOiIyMDI2LTA1LTAxVDA4OjAwOjAwWiIsImlkIjoiOWFiMTJjMzQifQ==
+        previousToken:
+          type: string
+          nullable: true
+          description: Cursor for the previous page. Null when this is the first page.
+          example: null
+
+    GoalListResponse:
+      allOf:
+        - $ref: '#/components/schemas/PagedResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/GoalResponse'
+              description: Goals on the current page, ordered by creation date descending
+          required:
+            - data
+
+    CreateGoalRequest:
+      type: object
+      required:
+        - name
+        - targetAmount
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Name of the saving goal
+          example: Emergency Fund
+        targetAmount:
+          type: number
+          format: double
+          minimum: 1
+          description: Target amount to save
+          example: 50000.00
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+          default: INR
+          description: ISO 4217 currency code
+          example: INR
+        targetDate:
+          type: string
+          format: date
+          description: Optional target date to achieve the goal (YYYY-MM-DD)
+          example: '2026-12-31'
+        notes:
+          type: string
+          maxLength: 500
+          description: Optional notes about the goal
+          example: 6 months of living expenses
+
+    GoalResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the goal
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        name:
+          type: string
+          description: Name of the saving goal
+          example: Emergency Fund
+        targetAmount:
+          type: number
+          format: double
+          description: Target amount to save
+          example: 50000.00
+        currentAmount:
+          type: number
+          format: double
+          description: Amount saved so far
+          example: 0.00
+        currency:
+          type: string
+          description: ISO 4217 currency code
+          example: INR
+        targetDate:
+          type: string
+          format: date
+          nullable: true
+          description: Target date to achieve the goal
+          example: '2026-12-31'
+        notes:
+          type: string
+          nullable: true
+          description: Optional notes about the goal
+          example: 6 months of living expenses
+        status:
+          type: string
+          enum: [ACTIVE, COMPLETED, CANCELLED]
+          description: Current status of the goal
+          example: ACTIVE
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the goal was created
+          example: '2026-06-04T10:30:00Z'
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 400
+        error:
+          type: string
+          example: Bad Request
+        message:
+          type: string
+          example: phoneNumber must be a valid E.164 formatted number
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []
