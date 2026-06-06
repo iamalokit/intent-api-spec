@@ -1,0 +1,11 @@
+{
+  "name": "@iamalokit/intent-api-spec",
+  "version": "0.0.1",
+  "description": "Intent API OpenAPI Specification",
+  "files": [
+    "openapi.yaml"
+  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  }
+}
