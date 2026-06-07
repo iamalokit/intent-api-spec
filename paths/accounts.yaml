@@ -1,0 +1,48 @@
+post:
+  tags:
+    - Accounts
+  summary: Create a user account
+  description: >
+    Links a financial account to the authenticated user. The account starts
+    with the provided balance (or no balance if omitted) and the given account type.
+  operationId: createAccount
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components/schemas/accounts/CreateAccountRequest.yaml'
+        example:
+          accountName: HDFC Savings
+          accountType: SAVINGS
+          currentBalance: 25000.00
+          balanceSource: MANUAL
+  responses:
+    '201':
+      description: Account created successfully
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/accounts/AccountResponse.yaml'
+          example:
+            id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+            accountName: HDFC Savings
+            accountType: SAVINGS
+            currentBalance: 25000.00
+            balanceSource: MANUAL
+            lastSyncedAt: null
+            createdAt: '2026-06-07T10:30:00Z'
+    '400':
+      description: Validation error — missing or invalid fields
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/common/ErrorResponse.yaml'
+          example:
+            status: 400
+            error: Bad Request
+            message: accountName must not be blank
+    '401':
+      $ref: '../components/responses/UnauthorizedResponse.yaml'
+    '500':
+      $ref: '../components/responses/InternalServerErrorResponse.yaml'

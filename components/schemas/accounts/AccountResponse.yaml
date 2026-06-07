@@ -1,0 +1,35 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    description: Unique identifier of the account
+    example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+  accountName:
+    type: string
+    description: Display name of the account
+    example: HDFC Savings
+  accountType:
+    $ref: './AccountType.yaml'
+  currentBalance:
+    type: number
+    format: double
+    nullable: true
+    description: Current balance of the account
+    example: 25000.00
+  balanceSource:
+    type: string
+    nullable: true
+    description: How the balance was obtained
+    example: MANUAL
+  lastSyncedAt:
+    type: string
+    format: date-time
+    nullable: true
+    description: Timestamp of the last balance sync
+    example: '2026-06-07T10:30:00Z'
+  createdAt:
+    type: string
+    format: date-time
+    description: Timestamp when the account was created
+    example: '2026-06-07T10:30:00Z'

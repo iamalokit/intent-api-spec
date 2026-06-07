@@ -12,12 +12,39 @@
 	<build>
 		<resources>
 			<resource>
-				<directory>${project.basedir}</directory>
+				<!-- Package the bundled single-file spec produced by the bundle step below -->
+				<directory>${project.build.directory}/spec</directory>
 				<includes>
 					<include>openapi.yaml</include>
 				</includes>
 			</resource>
 		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.3.0</version>
+				<executions>
+					<execution>
+						<id>bundle-api-spec</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>npx</executable>
+							<arguments>
+								<argument>@redocly/cli</argument>
+								<argument>bundle</argument>
+								<argument>openapi.yaml</argument>
+								<argument>--output</argument>
+								<argument>${project.build.directory}/spec/openapi.yaml</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 	</build>
 
 	<distributionManagement>

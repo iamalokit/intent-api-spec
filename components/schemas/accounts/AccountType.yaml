@@ -1,0 +1,4 @@
+type: string
+enum: [SAVINGS, CURRENT, CREDIT, WALLET]
+description: Type of the financial account
+example: SAVINGS

@@ -5,7 +5,14 @@
   "files": [
     "openapi.yaml"
   ],
+  "scripts": {
+    "preview": "redocly preview-docs openapi.yaml --port 8082",
+    "bundle": "redocly bundle openapi.yaml --output openapi.bundle.yaml"
+  },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
+  },
+  "devDependencies": {
+    "@redocly/cli": "^1.25.0"
   }
 }

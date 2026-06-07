@@ -1,0 +1,12 @@
+apis:
+  intent-api@v1:
+    root: ./openapi.yaml
+
+theme:
+  openapi:
+    showConsole: true
+    generateCodeSamples:
+      languages:
+        - lang: curl
+        - lang: JavaScript
+        - lang: Java
