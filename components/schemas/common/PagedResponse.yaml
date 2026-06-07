@@ -1,0 +1,9 @@
+type: object
+description: >
+  Base schema for all paginated list responses. Every list API extends
+  this via allOf and adds a typed `data` array.
+properties:
+  paging:
+    $ref: './PageInfo.yaml'
+required:
+  - paging

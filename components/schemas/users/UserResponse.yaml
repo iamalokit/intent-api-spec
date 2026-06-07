@@ -1,0 +1,20 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    description: Unique identifier of the user
+    example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+  phoneNumber:
+    type: string
+    description: Mobile number in E.164 format
+    example: "+919876543210"
+  active:
+    type: boolean
+    description: Whether the account is active
+    example: true
+  createdAt:
+    type: string
+    format: date-time
+    description: Timestamp when the account was created
+    example: '2026-06-04T10:30:00Z'

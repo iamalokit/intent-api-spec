@@ -1,0 +1,48 @@
+post:
+  tags:
+    - Auth
+  summary: Send OTP to a mobile number
+  description: >
+    Sends a one-time password (OTP) via SMS to the provided phone number.
+    The OTP is valid for a limited time and can only be used once.
+  operationId: sendOtp
+  security: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/auth/SendOtpRequest.yaml'
+        example:
+          phoneNumber: "+919876543210"
+  responses:
+    '200':
+      description: OTP sent successfully
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/auth/SendOtpResponse.yaml'
+          example:
+            message: OTP sent successfully
+    '400':
+      description: Invalid request — phone number missing or malformed
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/common/ErrorResponse.yaml'
+          example:
+            status: 400
+            error: Bad Request
+            message: "phoneNumber must be a valid E.164 formatted number"
+    '429':
+      description: Too many OTP requests — rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/common/ErrorResponse.yaml'
+          example:
+            status: 429
+            error: Too Many Requests
+            message: "OTP request limit exceeded. Please try again after 60 seconds."
+    '500':
+      $ref: '../../components/responses/InternalServerErrorResponse.yaml'

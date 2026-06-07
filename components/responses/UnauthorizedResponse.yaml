@@ -1,0 +1,9 @@
+description: Unauthorized — missing or invalid JWT token
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/common/ErrorResponse.yaml'
+    example:
+      status: 401
+      error: Unauthorized
+      message: Full authentication is required to access this resource

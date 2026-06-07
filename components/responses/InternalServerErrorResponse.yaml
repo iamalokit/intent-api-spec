@@ -1,0 +1,9 @@
+description: Internal server error
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/common/ErrorResponse.yaml'
+    example:
+      status: 500
+      error: Internal Server Error
+      message: An unexpected error occurred

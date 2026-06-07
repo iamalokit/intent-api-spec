@@ -1,0 +1,43 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    description: Unique identifier of the goal
+    example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+  name:
+    type: string
+    description: Name of the saving goal
+    example: Emergency Fund
+  targetAmount:
+    type: number
+    format: double
+    description: Target amount to save
+    example: 50000.00
+  currentAmount:
+    type: number
+    format: double
+    description: Amount saved so far
+    example: 0.00
+  currency:
+    type: string
+    description: ISO 4217 currency code
+    example: INR
+  targetDate:
+    type: string
+    format: date
+    nullable: true
+    description: Target date to achieve the goal
+    example: '2026-12-31'
+  notes:
+    type: string
+    nullable: true
+    description: Optional notes about the goal
+    example: 6 months of living expenses
+  status:
+    $ref: './GoalStatus.yaml'
+  createdAt:
+    type: string
+    format: date-time
+    description: Timestamp when the goal was created
+    example: '2026-06-04T10:30:00Z'

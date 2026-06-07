@@ -1,0 +1,35 @@
+post:
+  tags:
+    - Users
+  summary: Create a user account
+  description: >
+    Provisions a user account for the authenticated phone number.
+    The phone number is extracted from the JWT token issued after OTP
+    verification. Returns 409 if an account already exists for that number.
+  operationId: createUser
+  responses:
+    '201':
+      description: User account created successfully
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/users/UserResponse.yaml'
+          example:
+            id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+            phoneNumber: "+919876543210"
+            active: true
+            createdAt: '2026-06-04T10:30:00Z'
+    '401':
+      $ref: '../components/responses/UnauthorizedResponse.yaml'
+    '409':
+      description: Conflict — account already exists for this phone number
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/common/ErrorResponse.yaml'
+          example:
+            status: 409
+            error: Conflict
+            message: An account already exists for this phone number
+    '500':
+      $ref: '../components/responses/InternalServerErrorResponse.yaml'

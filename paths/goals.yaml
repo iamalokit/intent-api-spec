@@ -1,0 +1,167 @@
+get:
+  tags:
+    - Goals
+  summary: List saving goals
+  description: >
+    Returns all saving goals for the authenticated user, ordered by
+    creation date descending. Optionally filter by status.
+  operationId: listGoals
+  parameters:
+    - name: filter
+      in: query
+      required: false
+      description: >
+        Filter expression supporting comparison and logical operators.
+
+
+        **Grammar**
+
+        ```
+
+        expr       = term ( ("and" | "or") term )*
+
+        term       = field operator value | "(" expr ")"
+
+        operator   = "eq" | "neq"
+
+        field      = "status" | "currency"
+
+        value      = bare word (no quotes)
+
+        ```
+
+        Operator precedence follows standard rules — `and` binds tighter than `or`.
+        Use parentheses to override.
+
+
+        **Supported fields**
+
+        | Field      | Type   | Allowed values                        |
+
+        |------------|--------|---------------------------------------|
+
+        | `status`   | enum   | `ACTIVE`, `COMPLETED`, `CANCELLED`    |
+
+        | `currency` | string | ISO 4217 code, e.g. `INR`, `USD`     |
+
+
+        **Examples**
+
+        - `status eq ACTIVE`
+
+        - `status neq CANCELLED`
+
+        - `status eq ACTIVE and currency eq INR`
+
+        - `status eq ACTIVE or status eq COMPLETED`
+
+        - `(status eq ACTIVE or status eq COMPLETED) and currency eq INR`
+      schema:
+        type: string
+      example: status eq ACTIVE and currency eq INR
+    - name: token
+      in: query
+      required: false
+      description: >
+        Opaque pagination cursor returned in `paging.nextToken` or
+        `paging.previousToken` from a previous response. Omit to fetch
+        the first page.
+      schema:
+        type: string
+    - name: size
+      in: query
+      required: false
+      description: Number of goals per page. Capped at 100.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+  responses:
+    '200':
+      description: Goals retrieved successfully
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/goals/GoalListResponse.yaml'
+          example:
+            data:
+              - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                name: Emergency Fund
+                targetAmount: 50000.00
+                currentAmount: 12000.00
+                currency: INR
+                targetDate: '2026-12-31'
+                notes: 6 months of living expenses
+                status: ACTIVE
+                createdAt: '2026-06-04T10:30:00Z'
+            paging:
+              currentToken: eyJjcmVhdGVkQXQiOiIyMDI2LTA2LTA0VDEwOjMwOjAwWiIsImlkIjoiM2ZhODVmNjQifQ==
+              nextToken: eyJjcmVhdGVkQXQiOiIyMDI2LTA1LTAxVDA4OjAwOjAwWiIsImlkIjoiOWFiMTJjMzQifQ==
+              previousToken: null
+    '400':
+      description: Invalid filter expression
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/common/ErrorResponse.yaml'
+          example:
+            status: 400
+            error: Bad Request
+            message: "Invalid filter expression: unexpected token 'ACTIVE' at position 10"
+    '401':
+      $ref: '../components/responses/UnauthorizedResponse.yaml'
+    '500':
+      $ref: '../components/responses/InternalServerErrorResponse.yaml'
+
+post:
+  tags:
+    - Goals
+  summary: Create a new saving goal
+  description: >
+    Creates a saving goal for the authenticated user. The goal starts with
+    a current amount of zero and a status of ACTIVE.
+  operationId: createGoal
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components/schemas/goals/CreateGoalRequest.yaml'
+        example:
+          name: Emergency Fund
+          targetAmount: 50000.00
+          currency: INR
+          targetDate: '2026-12-31'
+          notes: 6 months of living expenses
+  responses:
+    '201':
+      description: Goal created successfully
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/goals/GoalResponse.yaml'
+          example:
+            id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+            name: Emergency Fund
+            targetAmount: 50000.00
+            currentAmount: 0.00
+            currency: INR
+            targetDate: '2026-12-31'
+            notes: 6 months of living expenses
+            status: ACTIVE
+            createdAt: '2026-06-04T10:30:00Z'
+    '400':
+      description: Validation error — missing or invalid fields
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/common/ErrorResponse.yaml'
+          example:
+            status: 400
+            error: Bad Request
+            message: targetAmount must be greater than or equal to 1
+    '401':
+      $ref: '../components/responses/UnauthorizedResponse.yaml'
+    '500':
+      $ref: '../components/responses/InternalServerErrorResponse.yaml'

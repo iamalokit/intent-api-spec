@@ -1,0 +1,9 @@
+type: object
+required:
+  - phoneNumber
+properties:
+  phoneNumber:
+    type: string
+    description: Mobile number in E.164 format
+    pattern: '^\+[1-9]\d{7,14}$'
+    example: "+919876543210"

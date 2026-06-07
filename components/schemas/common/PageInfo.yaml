@@ -1,0 +1,16 @@
+type: object
+properties:
+  currentToken:
+    type: string
+    description: Opaque cursor identifying the current page position
+    example: eyJjcmVhdGVkQXQiOiIyMDI2LTA2LTA0VDEwOjMwOjAwWiIsImlkIjoiM2ZhODVmNjQifQ==
+  nextToken:
+    type: string
+    nullable: true
+    description: Cursor for the next page. Null when this is the last page.
+    example: eyJjcmVhdGVkQXQiOiIyMDI2LTA1LTAxVDA4OjAwOjAwWiIsImlkIjoiOWFiMTJjMzQifQ==
+  previousToken:
+    type: string
+    nullable: true
+    description: Cursor for the previous page. Null when this is the first page.
+    example: null

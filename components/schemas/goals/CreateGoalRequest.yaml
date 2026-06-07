@@ -1,0 +1,33 @@
+type: object
+required:
+  - name
+  - targetAmount
+properties:
+  name:
+    type: string
+    minLength: 1
+    maxLength: 100
+    description: Name of the saving goal
+    example: Emergency Fund
+  targetAmount:
+    type: number
+    format: double
+    minimum: 1
+    description: Target amount to save
+    example: 50000.00
+  currency:
+    type: string
+    pattern: '^[A-Z]{3}$'
+    default: INR
+    description: ISO 4217 currency code
+    example: INR
+  targetDate:
+    type: string
+    format: date
+    description: Optional target date to achieve the goal (YYYY-MM-DD)
+    example: '2026-12-31'
+  notes:
+    type: string
+    maxLength: 500
+    description: Optional notes about the goal
+    example: 6 months of living expenses

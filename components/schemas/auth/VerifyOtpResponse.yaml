@@ -1,0 +1,9 @@
+type: object
+properties:
+  message:
+    type: string
+    example: OTP verified successfully
+  token:
+    type: string
+    description: JWT bearer token for authenticated requests
+    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
