@@ -60,6 +60,8 @@ components:
       $ref: './components/schemas/accounts/CreateAccountRequest.yaml'
     AccountResponse:
       $ref: './components/schemas/accounts/AccountResponse.yaml'
+    AccountListResponse:
+      $ref: './components/schemas/accounts/AccountListResponse.yaml'
     # Goals
     GoalStatus:
       $ref: './components/schemas/goals/GoalStatus.yaml'
