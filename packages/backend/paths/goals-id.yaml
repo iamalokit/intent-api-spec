@@ -1,0 +1,48 @@
+get:
+  tags:
+    - Goals
+  summary: Get a saving goal by ID
+  description: >
+    Returns a single saving goal by its ID. Returns 404 if the goal does not
+    exist or does not belong to the authenticated user.
+  operationId: getGoalById
+  parameters:
+    - name: goalId
+      in: path
+      required: true
+      description: Unique identifier of the saving goal
+      schema:
+        type: string
+        format: uuid
+      example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+  responses:
+    '200':
+      description: Goal retrieved successfully
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/goals/GoalResponse.yaml'
+          example:
+            id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+            name: Emergency Fund
+            targetAmount: 50000.00
+            currentAmount: 12000.00
+            currency: INR
+            targetDate: '2026-12-31'
+            notes: 6 months of living expenses
+            status: ACTIVE
+            createdAt: '2026-06-04T10:30:00Z'
+    '401':
+      $ref: '../components/responses/UnauthorizedResponse.yaml'
+    '404':
+      description: Goal not found or does not belong to the authenticated user
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/common/ErrorResponse.yaml'
+          example:
+            status: 404
+            error: Not Found
+            message: Goal not found
+    '500':
+      $ref: '../components/responses/InternalServerErrorResponse.yaml'

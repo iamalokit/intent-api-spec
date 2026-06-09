@@ -1,18 +1,9 @@
 {
-  "name": "@iamalokit/intent-api-spec",
-  "version": "0.0.1",
-  "description": "Intent API OpenAPI Specification",
-  "files": [
-    "openapi.yaml"
-  ],
+  "name": "@intent/api-specs",
+  "version": "1.0.0",
+  "private": true,
   "scripts": {
-    "preview": "redocly preview-docs openapi.yaml --port 8082",
-    "bundle": "redocly bundle openapi.yaml --output openapi.bundle.yaml"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
-  "devDependencies": {
-    "@redocly/cli": "^1.25.0"
+    "build": "pnpm -r run build",
+    "preview": "pnpm -r run preview"
   }
 }

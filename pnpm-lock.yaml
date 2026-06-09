@@ -6,7 +6,9 @@ settings:
 
 importers:
 
-  .:
+  .: {}
+
+  packages/backend:
     devDependencies:
       '@redocly/cli':
         specifier: ^1.25.0

@@ -25,6 +25,8 @@ paths:
     $ref: './paths/accounts.yaml'
   /api/v1/goals:
     $ref: './paths/goals.yaml'
+  /api/v1/goals/{goalId}:
+    $ref: './paths/goals-id.yaml'
   /api/v1/auth/send-otp:
     $ref: './paths/auth/send-otp.yaml'
   /api/v1/auth/verify-otp:
