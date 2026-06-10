@@ -23,6 +23,8 @@ paths:
     $ref: './paths/users.yaml'
   /api/v1/accounts:
     $ref: './paths/accounts.yaml'
+  /api/v1/accounts/{accountId}:
+    $ref: './paths/accounts-id.yaml'
   /api/v1/goals:
     $ref: './paths/goals.yaml'
   /api/v1/goals/{goalId}:
@@ -64,6 +66,8 @@ components:
       $ref: './components/schemas/accounts/AccountResponse.yaml'
     AccountListResponse:
       $ref: './components/schemas/accounts/AccountListResponse.yaml'
+    UpdateAccountRequest:
+      $ref: './components/schemas/accounts/UpdateAccountRequest.yaml'
     # Goals
     GoalStatus:
       $ref: './components/schemas/goals/GoalStatus.yaml'

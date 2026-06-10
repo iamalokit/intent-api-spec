@@ -1,0 +1,114 @@
+get:
+  tags:
+    - Accounts
+  summary: Get an account by ID
+  description: >
+    Returns a single financial account by its ID. Returns 404 if the account
+    does not exist or does not belong to the authenticated user.
+  operationId: getAccountById
+  parameters:
+    - name: accountId
+      in: path
+      required: true
+      description: Unique identifier of the financial account
+      schema:
+        type: string
+        format: uuid
+      example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+  responses:
+    '200':
+      description: Account retrieved successfully
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/accounts/AccountResponse.yaml'
+          example:
+            id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+            accountName: HDFC Savings
+            accountType: SAVINGS
+            currentBalance: 25000.00
+            balanceSource: MANUAL
+            lastSyncedAt: null
+            createdAt: '2026-06-07T10:30:00Z'
+    '401':
+      $ref: '../components/responses/UnauthorizedResponse.yaml'
+    '404':
+      description: Account not found or does not belong to the authenticated user
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/common/ErrorResponse.yaml'
+          example:
+            status: 404
+            error: Not Found
+            message: Account not found
+    '500':
+      $ref: '../components/responses/InternalServerErrorResponse.yaml'
+
+patch:
+  tags:
+    - Accounts
+  summary: Update an account by ID
+  description: >
+    Partially updates a financial account. Only fields included in the request
+    body are updated. Returns 404 if the account does not exist or does not
+    belong to the authenticated user.
+  operationId: updateAccount
+  parameters:
+    - name: accountId
+      in: path
+      required: true
+      description: Unique identifier of the financial account
+      schema:
+        type: string
+        format: uuid
+      example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components/schemas/accounts/UpdateAccountRequest.yaml'
+        example:
+          accountName: HDFC Savings
+          currentBalance: 30000.00
+          balanceSource: MANUAL
+  responses:
+    '200':
+      description: Account updated successfully
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/accounts/AccountResponse.yaml'
+          example:
+            id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+            accountName: HDFC Savings
+            accountType: SAVINGS
+            currentBalance: 30000.00
+            balanceSource: MANUAL
+            lastSyncedAt: null
+            createdAt: '2026-06-07T10:30:00Z'
+    '400':
+      description: Validation error — invalid field values
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/common/ErrorResponse.yaml'
+          example:
+            status: 400
+            error: Bad Request
+            message: currentBalance must be greater than or equal to 0
+    '401':
+      $ref: '../components/responses/UnauthorizedResponse.yaml'
+    '404':
+      description: Account not found or does not belong to the authenticated user
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/common/ErrorResponse.yaml'
+          example:
+            status: 404
+            error: Not Found
+            message: Account not found
+    '500':
+      $ref: '../components/responses/InternalServerErrorResponse.yaml'

@@ -1,0 +1,21 @@
+type: object
+properties:
+  accountName:
+    type: string
+    minLength: 1
+    maxLength: 100
+    description: Display name of the account
+    example: HDFC Savings
+  accountType:
+    $ref: './AccountType.yaml'
+  currentBalance:
+    type: number
+    format: double
+    minimum: 0
+    description: Updated balance of the account
+    example: 30000.00
+  balanceSource:
+    type: string
+    enum: [MANUAL, BANK_SYNC]
+    description: How the balance was obtained
+    example: MANUAL
