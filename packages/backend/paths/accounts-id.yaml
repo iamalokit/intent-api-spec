@@ -45,7 +45,7 @@ get:
     '500':
       $ref: '../components/responses/InternalServerErrorResponse.yaml'
 
-patch:
+put:
   tags:
     - Accounts
   summary: Update an account by ID
