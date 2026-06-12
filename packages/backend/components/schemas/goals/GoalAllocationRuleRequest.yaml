@@ -1,0 +1,26 @@
+type: object
+required:
+  - triggerType
+  - ruleType
+properties:
+  triggerType:
+    type: string
+    maxLength: 50
+    description: Event that triggers this allocation rule
+    example: INCOME_RECEIVED
+  ruleType:
+    type: string
+    maxLength: 50
+    description: Type of allocation calculation (e.g. FIXED_AMOUNT)
+    example: FIXED_AMOUNT
+  fixedAmount:
+    type: number
+    format: double
+    minimum: 0
+    description: Fixed amount to allocate (required when ruleType is FIXED_AMOUNT)
+    example: 5000.00
+  enabled:
+    type: boolean
+    default: true
+    description: Whether this allocation rule is active
+    example: true

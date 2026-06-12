@@ -28,3 +28,5 @@ properties:
     example: 6 months of living expenses
   status:
     $ref: './GoalStatus.yaml'
+  allocationRule:
+    $ref: './GoalAllocationRuleRequest.yaml'

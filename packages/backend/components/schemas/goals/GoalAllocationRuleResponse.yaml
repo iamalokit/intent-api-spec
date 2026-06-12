@@ -1,0 +1,25 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    description: Unique identifier of the allocation rule
+    example: 3fa85f64-5717-4562-b3fc-2c963f66afa7
+  triggerType:
+    type: string
+    description: Event that triggers this allocation rule
+    example: INCOME_RECEIVED
+  ruleType:
+    type: string
+    description: Type of allocation calculation
+    example: FIXED_AMOUNT
+  fixedAmount:
+    type: number
+    format: double
+    nullable: true
+    description: Fixed amount to allocate
+    example: 5000.00
+  enabled:
+    type: boolean
+    description: Whether this allocation rule is active
+    example: true

@@ -31,3 +31,5 @@ properties:
     maxLength: 500
     description: Optional notes about the goal
     example: 6 months of living expenses
+  allocationRule:
+    $ref: './GoalAllocationRuleRequest.yaml'

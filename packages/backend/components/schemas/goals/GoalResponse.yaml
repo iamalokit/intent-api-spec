@@ -41,3 +41,8 @@ properties:
     format: date-time
     description: Timestamp when the goal was created
     example: '2026-06-04T10:30:00Z'
+  allocationRule:
+    allOf:
+      - $ref: './GoalAllocationRuleResponse.yaml'
+    nullable: true
+    description: Allocation rule associated with this goal, if any
