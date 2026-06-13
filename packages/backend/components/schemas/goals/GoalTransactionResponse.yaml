@@ -1,0 +1,19 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    description: Unique identifier of the transaction
+    example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+  amount:
+    type: number
+    format: double
+    description: Absolute value of the transaction amount
+    example: 5000.00
+  transactionType:
+    $ref: './GoalTransactionType.yaml'
+  createdAt:
+    type: string
+    format: date-time
+    description: Timestamp when the transaction was recorded
+    example: '2026-06-13T09:15:00Z'

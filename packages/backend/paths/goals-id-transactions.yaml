@@ -1,0 +1,71 @@
+get:
+  tags:
+    - Goals
+  summary: List transactions for a saving goal
+  description: >
+    Returns a paginated list of allocation transactions recorded against a
+    saving goal, ordered by creation date descending. Returns 404 if the goal
+    does not exist or does not belong to the authenticated user.
+  operationId: listGoalTransactions
+  parameters:
+    - name: goalId
+      in: path
+      required: true
+      description: Unique identifier of the saving goal
+      schema:
+        type: string
+        format: uuid
+      example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+    - name: token
+      in: query
+      required: false
+      description: >
+        Opaque pagination cursor returned in `paging.nextToken` or
+        `paging.previousToken` from a previous response. Omit to fetch
+        the first page.
+      schema:
+        type: string
+    - name: size
+      in: query
+      required: false
+      description: Number of transactions per page. Capped at 100.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+  responses:
+    '200':
+      description: Transactions retrieved successfully
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/goals/GoalTransactionListResponse.yaml'
+          example:
+            data:
+              - id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                amount: 5000.00
+                transactionType: DEPOSIT
+                createdAt: '2026-06-13T09:15:00Z'
+              - id: 1a2b3c4d-5e6f-7890-abcd-ef1234567890
+                amount: 1000.00
+                transactionType: WITHDRAWAL
+                createdAt: '2026-06-10T14:30:00Z'
+            paging:
+              currentToken: eyJjcmVhdGVkQXQiOiIyMDI2LTA2LTEzVDA5OjE1OjAwWiIsImlkIjoiN2M5ZTY2NzkifQ==
+              nextToken: null
+              previousToken: null
+    '401':
+      $ref: '../components/responses/UnauthorizedResponse.yaml'
+    '404':
+      description: Goal not found or does not belong to the authenticated user
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/common/ErrorResponse.yaml'
+          example:
+            status: 404
+            error: Not Found
+            message: Goal not found
+    '500':
+      $ref: '../components/responses/InternalServerErrorResponse.yaml'

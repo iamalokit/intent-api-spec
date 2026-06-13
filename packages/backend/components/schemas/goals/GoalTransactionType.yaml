@@ -1,0 +1,6 @@
+type: string
+description: Direction of the goal transaction
+enum:
+  - DEPOSIT
+  - WITHDRAWAL
+example: DEPOSIT
