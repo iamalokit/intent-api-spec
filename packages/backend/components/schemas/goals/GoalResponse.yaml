@@ -36,6 +36,10 @@ properties:
     example: 6 months of living expenses
   status:
     $ref: './GoalStatus.yaml'
+  order:
+    type: integer
+    description: Display order of the goal
+    example: 0
   createdAt:
     type: string
     format: date-time

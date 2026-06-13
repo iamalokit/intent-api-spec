@@ -1,0 +1,61 @@
+put:
+  tags:
+    - Goals
+  summary: Reorder saving goals
+  description: >
+    Replaces the display order of all saving goals for the authenticated user
+    in a single atomic operation. The request must include every goal owned by
+    the user — partial lists are rejected with 400.
+
+
+    **Constraints**
+
+    - `orderings` must contain exactly one entry per goal owned by the user.
+
+    - `order` values within the list must be unique non-negative integers.
+
+    - Goals belonging to other users are ignored if accidentally included and
+      will not cause an error; only the caller's goals are updated.
+  operationId: reorderGoals
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components/schemas/goals/UpdateGoalOrderRequest.yaml'
+        example:
+          orderings:
+            - goalId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              order: 0
+            - goalId: 7bc91a23-1234-4abc-9def-4d8e7f123456
+              order: 1
+            - goalId: a1b2c3d4-5678-4ef0-abcd-ef1234567890
+              order: 2
+  responses:
+    '204':
+      description: Goals reordered successfully
+    '400':
+      description: >
+        Validation error — missing goals, duplicate order values, or malformed
+        request body
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/common/ErrorResponse.yaml'
+          examples:
+            missingGoals:
+              summary: Orderings list does not cover all user goals
+              value:
+                status: 400
+                error: Bad Request
+                message: "Orderings must include all 3 goals; got 2"
+            duplicateOrder:
+              summary: Duplicate order values in the list
+              value:
+                status: 400
+                error: Bad Request
+                message: "Duplicate order value: 1"
+    '401':
+      $ref: '../components/responses/UnauthorizedResponse.yaml'
+    '500':
+      $ref: '../components/responses/InternalServerErrorResponse.yaml'

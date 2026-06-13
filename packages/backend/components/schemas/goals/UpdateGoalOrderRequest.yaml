@@ -1,0 +1,27 @@
+type: object
+required:
+  - orderings
+properties:
+  orderings:
+    type: array
+    minItems: 1
+    description: >
+      Complete list of goal-to-order mappings for the authenticated user.
+      Every goal owned by the user must be included; omitting a goal is a
+      validation error. Order values must be unique non-negative integers.
+    items:
+      type: object
+      required:
+        - goalId
+        - order
+      properties:
+        goalId:
+          type: string
+          format: uuid
+          description: Unique identifier of the goal
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        order:
+          type: integer
+          minimum: 0
+          description: New display position for the goal (0-indexed)
+          example: 0

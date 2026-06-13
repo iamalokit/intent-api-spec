@@ -31,5 +31,10 @@ properties:
     maxLength: 500
     description: Optional notes about the goal
     example: 6 months of living expenses
+  order:
+    type: integer
+    minimum: 0
+    description: Display order of the goal (defaults to last position if omitted)
+    example: 0
   allocationRule:
     $ref: './GoalAllocationRuleRequest.yaml'
