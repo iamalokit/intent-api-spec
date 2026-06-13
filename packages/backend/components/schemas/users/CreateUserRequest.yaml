@@ -1,0 +1,7 @@
+type: object
+properties:
+  timezone:
+    type: string
+    maxLength: 50
+    description: IANA timezone identifier for the user
+    example: Asia/Kolkata

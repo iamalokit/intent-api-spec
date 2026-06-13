@@ -13,6 +13,11 @@ properties:
     type: boolean
     description: Whether the account is active
     example: true
+  timezone:
+    type: string
+    description: IANA timezone identifier for the user
+    example: Asia/Kolkata
+    nullable: true
   createdAt:
     type: string
     format: date-time

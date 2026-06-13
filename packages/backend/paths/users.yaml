@@ -7,6 +7,14 @@ post:
     The phone number is extracted from the JWT token issued after OTP
     verification. Returns 409 if an account already exists for that number.
   operationId: createUser
+  requestBody:
+    required: false
+    content:
+      application/json:
+        schema:
+          $ref: '../components/schemas/users/CreateUserRequest.yaml'
+        example:
+          timezone: Asia/Kolkata
   responses:
     '201':
       description: User account created successfully

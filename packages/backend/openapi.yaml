@@ -55,6 +55,8 @@ components:
     VerifyOtpResponse:
       $ref: './components/schemas/auth/VerifyOtpResponse.yaml'
     # Users
+    CreateUserRequest:
+      $ref: './components/schemas/users/CreateUserRequest.yaml'
     UserResponse:
       $ref: './components/schemas/users/UserResponse.yaml'
     # Accounts
