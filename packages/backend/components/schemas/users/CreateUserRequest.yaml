@@ -1,5 +1,21 @@
 type: object
 properties:
+  firstName:
+    type: string
+    maxLength: 100
+    description: User's first name
+    example: Alokit
+  lastName:
+    type: string
+    maxLength: 100
+    description: User's last name
+    example: Jindal
+  email:
+    type: string
+    format: email
+    maxLength: 255
+    description: User's email address
+    example: user@example.com
   timezone:
     type: string
     maxLength: 50

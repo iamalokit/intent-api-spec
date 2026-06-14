@@ -13,6 +13,21 @@ properties:
     type: boolean
     description: Whether the account is active
     example: true
+  firstName:
+    type: string
+    description: User's first name
+    example: Alokit
+    nullable: true
+  lastName:
+    type: string
+    description: User's last name
+    example: Jindal
+    nullable: true
+  email:
+    type: string
+    description: User's email address
+    example: user@example.com
+    nullable: true
   timezone:
     type: string
     description: IANA timezone identifier for the user
