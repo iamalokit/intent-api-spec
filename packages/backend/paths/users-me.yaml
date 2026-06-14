@@ -1,0 +1,111 @@
+get:
+  tags:
+    - Users
+  summary: Get current user profile
+  description: >
+    Returns the profile of the authenticated user. The user is identified
+    by the JWT bearer token.
+  operationId: getCurrentUser
+  responses:
+    '200':
+      description: User profile retrieved successfully
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/users/UserResponse.yaml'
+          example:
+            id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+            phoneNumber: "+919876543210"
+            active: true
+            firstName: Alokit
+            lastName: Jindal
+            email: user@example.com
+            timezone: Asia/Kolkata
+            createdAt: '2026-06-04T10:30:00Z'
+    '401':
+      $ref: '../components/responses/UnauthorizedResponse.yaml'
+    '404':
+      description: User account not found
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/common/ErrorResponse.yaml'
+          example:
+            status: 404
+            error: Not Found
+            message: User not found
+    '500':
+      $ref: '../components/responses/InternalServerErrorResponse.yaml'
+
+put:
+  tags:
+    - Users
+  summary: Update current user profile
+  description: >
+    Partially updates the profile of the authenticated user. Only fields
+    included in the request body are updated; omitted fields retain their
+    current values. The user is identified by the JWT bearer token.
+    `phoneNumber`, `active`, and `createdAt` are immutable and cannot be
+    changed through this endpoint.
+  operationId: updateCurrentUser
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components/schemas/users/UpdateUserRequest.yaml'
+        example:
+          firstName: Alokit
+          lastName: Jindal
+          email: user@example.com
+          timezone: Asia/Kolkata
+  responses:
+    '200':
+      description: User profile updated successfully
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/users/UserResponse.yaml'
+          example:
+            id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+            phoneNumber: "+919876543210"
+            active: true
+            firstName: Alokit
+            lastName: Jindal
+            email: user@example.com
+            timezone: Asia/Kolkata
+            createdAt: '2026-06-04T10:30:00Z'
+    '400':
+      description: Validation error — invalid field values
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/common/ErrorResponse.yaml'
+          example:
+            status: 400
+            error: Bad Request
+            message: email must be a valid email address
+    '401':
+      $ref: '../components/responses/UnauthorizedResponse.yaml'
+    '404':
+      description: User account not found
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/common/ErrorResponse.yaml'
+          example:
+            status: 404
+            error: Not Found
+            message: User not found
+    '409':
+      description: Conflict — email address is already in use by another account
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/common/ErrorResponse.yaml'
+          example:
+            status: 409
+            error: Conflict
+            message: Email address is already in use
+    '500':
+      $ref: '../components/responses/InternalServerErrorResponse.yaml'

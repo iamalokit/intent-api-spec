@@ -21,6 +21,8 @@ tags:
 paths:
   /api/v1/users:
     $ref: './paths/users.yaml'
+  /api/v1/users/me:
+    $ref: './paths/users-me.yaml'
   /api/v1/accounts:
     $ref: './paths/accounts.yaml'
   /api/v1/accounts/{accountId}:
@@ -61,6 +63,8 @@ components:
     # Users
     CreateUserRequest:
       $ref: './components/schemas/users/CreateUserRequest.yaml'
+    UpdateUserRequest:
+      $ref: './components/schemas/users/UpdateUserRequest.yaml'
     UserResponse:
       $ref: './components/schemas/users/UserResponse.yaml'
     # Accounts
