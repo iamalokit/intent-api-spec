@@ -1,0 +1,37 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    description: Unique identifier of the budget
+    example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+  name:
+    type: string
+    description: Display name of the budget
+    example: Groceries
+  periodType:
+    $ref: './BudgetPeriodType.yaml'
+  amount:
+    type: number
+    format: double
+    description: Maximum spend allowed for the period
+    example: 10000.00
+  startDate:
+    type: string
+    format: date
+    description: Date from which the first budget period begins
+    example: '2026-06-01'
+  isActive:
+    type: boolean
+    description: Whether the budget is currently active
+    example: true
+  createdAt:
+    type: string
+    format: date-time
+    description: Timestamp when the budget was created
+    example: '2026-06-14T09:00:00Z'
+  updatedAt:
+    type: string
+    format: date-time
+    description: Timestamp when the budget was last updated
+    example: '2026-06-14T09:00:00Z'

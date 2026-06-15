@@ -1,0 +1,7 @@
+type: string
+description: The period over which the budget amount applies
+enum:
+  - WEEKLY
+  - MONTHLY
+  - YEARLY
+example: MONTHLY
