@@ -1,0 +1,11 @@
+allOf:
+  - $ref: '../common/PagedResponse.yaml'
+  - type: object
+    required:
+      - data
+    properties:
+      data:
+        type: array
+        items:
+          $ref: './BudgetResponse.yaml'
+        description: Budgets on the current page, ordered by creation date descending

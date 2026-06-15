@@ -1,3 +1,106 @@
+get:
+  tags:
+    - Budgets
+  summary: List budgets
+  description: >
+    Returns all budgets for the authenticated user, ordered by creation date
+    descending. Optionally filter using a structured filter expression.
+  operationId: listBudgets
+  parameters:
+    - name: filter
+      in: query
+      required: false
+      description: >
+        Filter expression supporting comparison and logical operators.
+
+
+        **Grammar**
+
+        ```
+
+        expr       = term ( ("and" | "or") term )*
+
+        term       = field operator value | "(" expr ")"
+
+        operator   = "eq" | "neq"
+
+        field      = "isActive" | "periodType"
+
+        value      = bare word (no quotes)
+
+        ```
+
+        Operator precedence follows standard rules — `and` binds tighter than `or`.
+        Use parentheses to override.
+
+
+        **Supported fields**
+
+        | Field        | Type    | Allowed values                  |
+
+        |--------------|---------|---------------------------------|
+
+        | `isActive`   | boolean | `true`, `false`                 |
+
+        | `periodType` | enum    | `WEEKLY`, `MONTHLY`, `YEARLY`   |
+
+
+        **Examples**
+
+        - `isActive eq true`
+
+        - `periodType eq MONTHLY`
+
+        - `isActive eq true and periodType eq MONTHLY`
+
+        - `periodType eq WEEKLY or periodType eq MONTHLY`
+      schema:
+        type: string
+      example: isActive eq true and periodType eq MONTHLY
+    - name: token
+      in: query
+      required: false
+      description: >
+        Opaque pagination cursor returned in `paging.nextToken` or
+        `paging.previousToken` from a previous response. Omit to fetch
+        the first page.
+      schema:
+        type: string
+    - name: size
+      in: query
+      required: false
+      description: Number of budgets per page. Capped at 100.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+  responses:
+    '200':
+      description: Budgets retrieved successfully
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/budgets/BudgetListResponse.yaml'
+          example:
+            data:
+              - id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                name: Groceries
+                periodType: MONTHLY
+                amount: 10000.00
+                startDate: '2026-06-01'
+                isActive: true
+                createdAt: '2026-06-14T09:00:00Z'
+                updatedAt: '2026-06-14T09:00:00Z'
+            paging:
+              currentToken: eyJjcmVhdGVkQXQiOiIyMDI2LTA2LTE0VDA5OjAwOjAwWiIsImlkIjoiN2M5ZTY2NzkifQ==
+              nextToken: null
+              previousToken: null
+    '401':
+      $ref: '../components/responses/UnauthorizedResponse.yaml'
+    '500':
+      $ref: '../components/responses/InternalServerErrorResponse.yaml'
+
 post:
   tags:
     - Budgets
