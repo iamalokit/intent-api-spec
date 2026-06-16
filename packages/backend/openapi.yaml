@@ -39,6 +39,8 @@ paths:
     $ref: './paths/goals-id-transactions.yaml'
   /api/v1/budgets:
     $ref: './paths/budgets.yaml'
+  /api/v1/budgets/{budgetId}:
+    $ref: './paths/budgets-id.yaml'
   /api/v1/auth/send-otp:
     $ref: './paths/auth/send-otp.yaml'
   /api/v1/auth/verify-otp:
@@ -110,6 +112,8 @@ components:
       $ref: './components/schemas/budgets/BudgetPeriodType.yaml'
     CreateBudgetRequest:
       $ref: './components/schemas/budgets/CreateBudgetRequest.yaml'
+    UpdateBudgetRequest:
+      $ref: './components/schemas/budgets/UpdateBudgetRequest.yaml'
     BudgetResponse:
       $ref: './components/schemas/budgets/BudgetResponse.yaml'
     BudgetListResponse:

@@ -1,0 +1,25 @@
+type: object
+properties:
+  name:
+    type: string
+    minLength: 1
+    maxLength: 100
+    description: Display name of the budget
+    example: Groceries
+  periodType:
+    $ref: './BudgetPeriodType.yaml'
+  amount:
+    type: number
+    format: double
+    minimum: 1
+    description: Maximum spend allowed for the period
+    example: 12000.00
+  startDate:
+    type: string
+    format: date
+    description: Date from which the budget period begins (YYYY-MM-DD)
+    example: '2026-07-01'
+  isActive:
+    type: boolean
+    description: Whether the budget is currently active
+    example: true
