@@ -1,0 +1,6 @@
+type: string
+description: Direction of the transaction
+enum:
+  - CREDIT
+  - DEBIT
+example: DEBIT

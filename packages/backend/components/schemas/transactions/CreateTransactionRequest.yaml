@@ -1,0 +1,25 @@
+type: object
+required:
+  - type
+  - amount
+properties:
+  type:
+    $ref: './TransactionType.yaml'
+  amount:
+    type: number
+    format: double
+    minimum: 0.01
+    description: Transaction amount
+    example: 1500.00
+  currency:
+    type: string
+    minLength: 3
+    maxLength: 3
+    default: INR
+    description: ISO 4217 currency code
+    example: INR
+  description:
+    type: string
+    maxLength: 255
+    description: Optional note or label for the transaction
+    example: Monthly grocery shopping

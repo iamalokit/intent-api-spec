@@ -1,0 +1,32 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    description: Unique identifier of the transaction
+    example: a3f1c2d4-91b7-4e5a-bc34-8f72e1d09abc
+  type:
+    $ref: './TransactionType.yaml'
+  amount:
+    type: number
+    format: double
+    description: Transaction amount
+    example: 1500.00
+  currency:
+    type: string
+    description: ISO 4217 currency code
+    example: INR
+  description:
+    type: string
+    description: Optional note or label for the transaction
+    example: Monthly grocery shopping
+  createdAt:
+    type: string
+    format: date-time
+    description: Timestamp when the transaction was recorded
+    example: '2026-06-19T10:30:00Z'
+  updatedAt:
+    type: string
+    format: date-time
+    description: Timestamp when the transaction was last updated
+    example: '2026-06-19T10:30:00Z'
