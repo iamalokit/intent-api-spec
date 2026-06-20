@@ -1,3 +1,125 @@
+get:
+  tags:
+    - Transactions
+  summary: List transactions
+  description: >
+    Returns a paginated list of credit and debit transactions for the
+    authenticated user, ordered by creation date descending. Supports
+    optional filtering via a structured filter string.
+  operationId: listTransactions
+  parameters:
+    - name: token
+      in: query
+      required: false
+      description: >
+        Opaque pagination cursor returned in `paging.nextToken` or
+        `paging.previousToken` from a previous response. Omit to fetch
+        the first page.
+      schema:
+        type: string
+    - name: size
+      in: query
+      required: false
+      description: Number of transactions per page. Capped at 100.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    - name: filter
+      in: query
+      required: false
+      description: >
+        Filter expression supporting comparison and logical operators.
+
+
+        **Grammar**
+
+        ```
+
+        expr       = term ( ("and" | "or") term )*
+
+        term       = field operator value | "(" expr ")"
+
+        operator   = "eq" | "neq" | "gt" | "gte" | "lt" | "lte"
+
+        field      = "type" | "createdAt"
+
+        value      = bare word (no quotes)
+
+        ```
+
+        Operator precedence follows standard rules — `and` binds tighter than `or`.
+        Use parentheses to override.
+
+
+        **Supported fields**
+
+        | Field        | Type      | Operators              | Allowed values / format          |
+
+        |--------------|-----------|------------------------|----------------------------------|
+
+        | `type`       | enum      | `eq`, `neq`            | `CREDIT`, `DEBIT`                |
+
+        | `createdAt`  | date-time | `gt`, `gte`, `lt`, `lte` | ISO 8601 UTC, e.g. `2026-06-01T00:00:00Z` |
+
+
+        **Examples**
+
+        - `type eq DEBIT`
+
+        - `type neq CREDIT`
+
+        - `createdAt gte 2026-06-01T00:00:00Z`
+
+        - `type eq DEBIT and createdAt gte 2026-06-01T00:00:00Z`
+
+        - `type eq DEBIT and createdAt gte 2026-06-01T00:00:00Z and createdAt lte 2026-06-30T23:59:59Z`
+      schema:
+        type: string
+      example: type eq DEBIT and createdAt gte 2026-06-01T00:00:00Z and createdAt lte 2026-06-30T23:59:59Z
+  responses:
+    '200':
+      description: Transactions retrieved successfully
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/transactions/TransactionListResponse.yaml'
+          example:
+            data:
+              - id: a3f1c2d4-91b7-4e5a-bc34-8f72e1d09abc
+                type: DEBIT
+                amount: 1500.00
+                currency: INR
+                description: Monthly grocery shopping
+                createdAt: '2026-06-19T10:30:00Z'
+                updatedAt: '2026-06-19T10:30:00Z'
+              - id: b7e2d3f5-02c8-5f6b-cd45-9g83f2e10bcd
+                type: CREDIT
+                amount: 50000.00
+                currency: INR
+                description: June salary
+                createdAt: '2026-06-01T09:00:00Z'
+                updatedAt: '2026-06-01T09:00:00Z'
+            paging:
+              currentToken: eyJjcmVhdGVkQXQiOiIyMDI2LTA2LTE5VDEwOjMwOjAwWiIsImlkIjoiYTNmMWMyZDQifQ==
+              nextToken: eyJjcmVhdGVkQXQiOiIyMDI2LTA2LTAxVDA5OjAwOjAwWiIsImlkIjoiYjdlMmQzZjUifQ==
+              previousToken: null
+    '400':
+      description: Validation error — invalid query parameters
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/common/ErrorResponse.yaml'
+          example:
+            status: 400
+            error: Bad Request
+            message: "Invalid filter expression: unexpected token 'DEBIT' at position 8"
+    '401':
+      $ref: '../components/responses/UnauthorizedResponse.yaml'
+    '500':
+      $ref: '../components/responses/InternalServerErrorResponse.yaml'
+
 post:
   tags:
     - Transactions
