@@ -1,0 +1,13 @@
+type: object
+properties:
+  amount:
+    type: number
+    format: double
+    minimum: 0.01
+    description: Corrected transaction amount
+    example: 2000.00
+  description:
+    type: string
+    maxLength: 255
+    description: Updated note or label for the transaction
+    example: Monthly grocery shopping — corrected
