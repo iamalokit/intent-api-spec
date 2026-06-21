@@ -29,3 +29,8 @@ properties:
     maxLength: 255
     description: Optional note or label for the transaction
     example: Monthly grocery shopping
+  budgetId:
+    type: string
+    format: uuid
+    description: ID of an existing budget to categorise this DEBIT transaction under
+    example: 7c9e6679-7425-40de-944b-e07fc1f90ae7

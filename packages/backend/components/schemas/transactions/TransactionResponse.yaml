@@ -10,6 +10,11 @@ properties:
     format: uuid
     description: ID of the account this transaction belongs to
     example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+  budgetId:
+    type: string
+    format: uuid
+    description: ID of the budget this transaction is categorised under, if any
+    example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
   type:
     $ref: './TransactionType.yaml'
   amount:
