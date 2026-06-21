@@ -114,3 +114,40 @@ put:
             message: Transaction not found
     '500':
       $ref: '../components/responses/InternalServerErrorResponse.yaml'
+
+delete:
+  tags:
+    - Transactions
+  summary: Delete a transaction by ID
+  description: >
+    Deletes a transaction permanently. This reverses the effect on the account
+    balance — a deleted DEBIT restores the amount to `currentBalance`, and a
+    deleted CREDIT subtracts it. Returns 404 if the transaction does not exist
+    or does not belong to the authenticated user.
+  operationId: deleteTransaction
+  parameters:
+    - name: transactionId
+      in: path
+      required: true
+      description: Unique identifier of the transaction
+      schema:
+        type: string
+        format: uuid
+      example: a3f1c2d4-91b7-4e5a-bc34-8f72e1d09abc
+  responses:
+    '204':
+      description: Transaction deleted successfully
+    '401':
+      $ref: '../components/responses/UnauthorizedResponse.yaml'
+    '404':
+      description: Transaction not found or does not belong to the authenticated user
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/common/ErrorResponse.yaml'
+          example:
+            status: 404
+            error: Not Found
+            message: Transaction not found
+    '500':
+      $ref: '../components/responses/InternalServerErrorResponse.yaml'
