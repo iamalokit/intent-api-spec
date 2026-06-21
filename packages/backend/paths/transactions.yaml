@@ -135,6 +135,7 @@ post:
         schema:
           $ref: '../components/schemas/transactions/CreateTransactionRequest.yaml'
         example:
+          accountId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
           type: DEBIT
           amount: 1500.00
           currency: INR
