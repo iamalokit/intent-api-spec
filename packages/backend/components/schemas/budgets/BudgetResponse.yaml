@@ -30,6 +30,11 @@ properties:
     format: date-time
     description: Timestamp when the budget was created
     example: '2026-06-14T09:00:00Z'
+  spentAmount:
+    type: number
+    format: double
+    description: Total DEBIT amount spent against this budget
+    example: 3500.00
   updatedAt:
     type: string
     format: date-time
