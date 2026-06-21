@@ -50,8 +50,8 @@ put:
     - Transactions
   summary: Update a transaction by ID
   description: >
-    Partially updates a transaction. Only `amount` and `description` can be
-    updated — `type` and `currency` are immutable after creation. Only fields
+    Partially updates a transaction. Only `accountId`, `amount`, and `description`
+    can be updated — `type` and `currency` are immutable after creation. Only fields
     included in the request body are applied. Returns 404 if the transaction
     does not exist or does not belong to the authenticated user.
   operationId: updateTransaction
@@ -71,6 +71,7 @@ put:
         schema:
           $ref: '../components/schemas/transactions/UpdateTransactionRequest.yaml'
         example:
+          accountId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
           amount: 2000.00
           description: Monthly grocery shopping — corrected
   responses:
@@ -82,6 +83,7 @@ put:
             $ref: '../components/schemas/transactions/TransactionResponse.yaml'
           example:
             id: a3f1c2d4-91b7-4e5a-bc34-8f72e1d09abc
+            accountId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
             type: DEBIT
             amount: 2000.00
             currency: INR
