@@ -45,6 +45,8 @@ paths:
     $ref: './paths/budgets-id.yaml'
   /api/v1/transactions:
     $ref: './paths/transactions.yaml'
+  /api/v1/transactions/descriptions:
+    $ref: './paths/transactions-descriptions.yaml'
   /api/v1/transactions/{transactionId}:
     $ref: './paths/transactions-id.yaml'
   /api/v1/auth/send-otp:
