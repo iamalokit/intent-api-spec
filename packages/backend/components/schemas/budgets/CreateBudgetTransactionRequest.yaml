@@ -1,0 +1,31 @@
+type: object
+required:
+  - accountId
+  - type
+  - amount
+properties:
+  accountId:
+    type: string
+    format: uuid
+    description: ID of the account this transaction belongs to
+    example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+  type:
+    $ref: '../transactions/TransactionType.yaml'
+  amount:
+    type: number
+    format: double
+    minimum: 0.01
+    description: Transaction amount
+    example: 1500.00
+  currency:
+    type: string
+    minLength: 3
+    maxLength: 3
+    default: INR
+    description: ISO 4217 currency code
+    example: INR
+  description:
+    type: string
+    maxLength: 255
+    description: Optional note or label for the transaction
+    example: Monthly grocery shopping

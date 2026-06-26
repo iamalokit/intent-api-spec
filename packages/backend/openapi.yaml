@@ -43,6 +43,8 @@ paths:
     $ref: './paths/budgets.yaml'
   /api/v1/budgets/{budgetId}:
     $ref: './paths/budgets-id.yaml'
+  /api/v1/budgets/{budgetId}/transactions:
+    $ref: './paths/budgets-id-transactions.yaml'
   /api/v1/transactions:
     $ref: './paths/transactions.yaml'
   /api/v1/transactions/descriptions:
@@ -126,6 +128,8 @@ components:
       $ref: './components/schemas/budgets/BudgetResponse.yaml'
     BudgetListResponse:
       $ref: './components/schemas/budgets/BudgetListResponse.yaml'
+    CreateBudgetTransactionRequest:
+      $ref: './components/schemas/budgets/CreateBudgetTransactionRequest.yaml'
     # Transactions
     TransactionType:
       $ref: './components/schemas/transactions/TransactionType.yaml'

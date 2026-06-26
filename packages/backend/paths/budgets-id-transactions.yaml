@@ -1,0 +1,72 @@
+post:
+  tags:
+    - Budgets
+  summary: Add a transaction to a budget category
+  description: >
+    Records a new transaction categorised under the specified budget.
+    The budget ID is taken from the path — do not include it in the request body.
+    Currency defaults to `INR` if not provided.
+    Returns 404 if the budget does not exist or does not belong to the authenticated user.
+  operationId: createBudgetTransaction
+  parameters:
+    - name: budgetId
+      in: path
+      required: true
+      description: Unique identifier of the budget category
+      schema:
+        type: string
+        format: uuid
+      example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components/schemas/budgets/CreateBudgetTransactionRequest.yaml'
+        example:
+          accountId: a1b2c3d4-5678-90ab-cdef-1234567890ab
+          type: DEBIT
+          amount: 1500.00
+          currency: INR
+          description: Monthly grocery shopping
+  responses:
+    '201':
+      description: Transaction recorded successfully
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/transactions/TransactionResponse.yaml'
+          example:
+            id: a3f1c2d4-91b7-4e5a-bc34-8f72e1d09abc
+            accountId: a1b2c3d4-5678-90ab-cdef-1234567890ab
+            budgetId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+            type: DEBIT
+            amount: 1500.00
+            currency: INR
+            description: Monthly grocery shopping
+            createdAt: '2026-06-26T10:30:00Z'
+            updatedAt: '2026-06-26T10:30:00Z'
+    '400':
+      description: Validation error — missing or invalid fields
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/common/ErrorResponse.yaml'
+          example:
+            status: 400
+            error: Bad Request
+            message: amount must be greater than or equal to 0.01
+    '401':
+      $ref: '../components/responses/UnauthorizedResponse.yaml'
+    '404':
+      description: Budget or account not found or does not belong to the authenticated user
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/common/ErrorResponse.yaml'
+          example:
+            status: 404
+            error: Not Found
+            message: Budget not found
+    '500':
+      $ref: '../components/responses/InternalServerErrorResponse.yaml'
