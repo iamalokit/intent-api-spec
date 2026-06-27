@@ -29,3 +29,8 @@ properties:
     maxLength: 255
     description: Optional note or label for the transaction
     example: Monthly grocery shopping
+  transactionDate:
+    type: string
+    format: date
+    description: Date when the transaction occurred (YYYY-MM-DD). Defaults to today if not provided.
+    example: '2026-06-27'

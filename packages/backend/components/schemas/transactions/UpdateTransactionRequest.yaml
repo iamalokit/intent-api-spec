@@ -16,3 +16,8 @@ properties:
     maxLength: 255
     description: Updated note or label for the transaction
     example: Monthly grocery shopping — corrected
+  transactionDate:
+    type: string
+    format: date
+    description: Corrected date when the transaction occurred (YYYY-MM-DD).
+    example: '2026-06-27'

@@ -34,3 +34,8 @@ properties:
     format: uuid
     description: ID of an existing budget to categorise this DEBIT transaction under
     example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+  transactionDate:
+    type: string
+    format: date
+    description: Date when the transaction occurred (YYYY-MM-DD). Defaults to today if not provided.
+    example: '2026-06-27'
