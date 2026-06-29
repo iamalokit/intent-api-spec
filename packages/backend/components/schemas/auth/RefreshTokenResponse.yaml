@@ -1,0 +1,10 @@
+type: object
+properties:
+  token:
+    type: string
+    description: New JWT access token (15-minute lifetime)
+    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+  refreshToken:
+    type: string
+    description: New refresh token (30-day lifetime). The old refresh token is now invalid.
+    example: "550e8400-e29b-41d4-a716-446655440001"

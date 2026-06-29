@@ -1,0 +1,24 @@
+post:
+  tags:
+    - Auth
+  summary: Sign out and revoke tokens
+  description: >
+    Invalidates the current access token (via server-side blocklist) and
+    revokes the provided refresh token. Always returns 200 so clients can
+    safely call this even if the access token has already expired.
+  operationId: signOut
+  security:
+    - bearerAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/auth/SignOutRequest.yaml'
+  responses:
+    '200':
+      description: Signed out successfully
+    '401':
+      $ref: '../../components/responses/UnauthorizedResponse.yaml'
+    '500':
+      $ref: '../../components/responses/InternalServerErrorResponse.yaml'

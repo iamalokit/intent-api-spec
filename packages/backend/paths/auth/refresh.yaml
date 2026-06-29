@@ -1,0 +1,39 @@
+post:
+  tags:
+    - Auth
+  summary: Refresh access token
+  description: >
+    Exchanges a valid refresh token for a new access token and a new refresh
+    token (rotation). The old refresh token is immediately revoked.
+  operationId: refreshToken
+  security: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/auth/RefreshTokenRequest.yaml'
+        example:
+          refreshToken: "550e8400-e29b-41d4-a716-446655440000"
+  responses:
+    '200':
+      description: New token pair issued
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/auth/RefreshTokenResponse.yaml'
+          example:
+            token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+            refreshToken: "550e8400-e29b-41d4-a716-446655440001"
+    '401':
+      description: Refresh token is invalid or has expired
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/common/ErrorResponse.yaml'
+          example:
+            status: 401
+            error: Unauthorized
+            message: Invalid or expired refresh token
+    '500':
+      $ref: '../../components/responses/InternalServerErrorResponse.yaml'

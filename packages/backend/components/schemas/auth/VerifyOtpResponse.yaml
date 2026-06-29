@@ -5,5 +5,9 @@ properties:
     example: OTP verified successfully
   token:
     type: string
-    description: JWT bearer token for authenticated requests
+    description: JWT access token (15-minute lifetime)
     example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+  refreshToken:
+    type: string
+    description: Opaque refresh token (30-day lifetime). Use POST /auth/refresh to obtain a new access token.
+    example: "550e8400-e29b-41d4-a716-446655440000"

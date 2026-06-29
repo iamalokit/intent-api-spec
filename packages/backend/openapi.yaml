@@ -55,6 +55,10 @@ paths:
     $ref: './paths/auth/send-otp.yaml'
   /api/v1/auth/verify-otp:
     $ref: './paths/auth/verify-otp.yaml'
+  /api/v1/auth/sign-out:
+    $ref: './paths/auth/sign-out.yaml'
+  /api/v1/auth/refresh:
+    $ref: './paths/auth/refresh.yaml'
 
 components:
   schemas:
@@ -76,6 +80,12 @@ components:
       $ref: './components/schemas/auth/VerifyOtpRequest.yaml'
     VerifyOtpResponse:
       $ref: './components/schemas/auth/VerifyOtpResponse.yaml'
+    SignOutRequest:
+      $ref: './components/schemas/auth/SignOutRequest.yaml'
+    RefreshTokenRequest:
+      $ref: './components/schemas/auth/RefreshTokenRequest.yaml'
+    RefreshTokenResponse:
+      $ref: './components/schemas/auth/RefreshTokenResponse.yaml'
     # Users
     CreateUserRequest:
       $ref: './components/schemas/users/CreateUserRequest.yaml'
