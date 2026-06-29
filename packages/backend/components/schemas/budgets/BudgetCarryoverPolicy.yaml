@@ -1,0 +1,6 @@
+type: string
+description: Controls what happens to unspent budget at the end of each period
+enum:
+  - RESET
+  - CARRY_OVER
+example: CARRY_OVER

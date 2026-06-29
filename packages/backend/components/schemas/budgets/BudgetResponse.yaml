@@ -25,6 +25,18 @@ properties:
     type: boolean
     description: Whether the budget is currently active
     example: true
+  carryoverPolicy:
+    $ref: './BudgetCarryoverPolicy.yaml'
+  carryoverAmount:
+    type: number
+    format: double
+    description: Accumulated unspent balance carried forward from previous periods
+    example: 2000.00
+  effectiveAmount:
+    type: number
+    format: double
+    description: Effective budget limit for the current period (amount + carryoverAmount)
+    example: 12000.00
   createdAt:
     type: string
     format: date-time

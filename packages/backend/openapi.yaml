@@ -130,6 +130,8 @@ components:
     # Budgets
     BudgetPeriodType:
       $ref: './components/schemas/budgets/BudgetPeriodType.yaml'
+    BudgetCarryoverPolicy:
+      $ref: './components/schemas/budgets/BudgetCarryoverPolicy.yaml'
     CreateBudgetRequest:
       $ref: './components/schemas/budgets/CreateBudgetRequest.yaml'
     UpdateBudgetRequest:

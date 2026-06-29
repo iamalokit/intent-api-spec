@@ -24,3 +24,5 @@ properties:
     format: date
     description: Date from which the first budget period begins (YYYY-MM-DD)
     example: '2026-06-01'
+  carryoverPolicy:
+    $ref: './BudgetCarryoverPolicy.yaml'

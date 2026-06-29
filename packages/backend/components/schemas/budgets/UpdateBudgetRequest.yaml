@@ -23,3 +23,5 @@ properties:
     type: boolean
     description: Whether the budget is currently active
     example: true
+  carryoverPolicy:
+    $ref: './BudgetCarryoverPolicy.yaml'
