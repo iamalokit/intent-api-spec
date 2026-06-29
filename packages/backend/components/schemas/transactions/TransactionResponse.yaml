@@ -26,6 +26,11 @@ properties:
     type: string
     description: ISO 4217 currency code
     example: INR
+  title:
+    type: string
+    maxLength: 50
+    description: Short title for the transaction
+    example: Grocery run
   description:
     type: string
     description: Optional note or label for the transaction

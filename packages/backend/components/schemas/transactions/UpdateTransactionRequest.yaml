@@ -11,6 +11,11 @@ properties:
     minimum: 0.01
     description: Corrected transaction amount
     example: 2000.00
+  title:
+    type: string
+    maxLength: 50
+    description: Updated short title for the transaction
+    example: Grocery run — corrected
   description:
     type: string
     maxLength: 255

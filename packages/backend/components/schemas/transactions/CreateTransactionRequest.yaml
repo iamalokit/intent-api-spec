@@ -3,6 +3,7 @@ required:
   - accountId
   - type
   - amount
+  - title
 properties:
   accountId:
     type: string
@@ -24,6 +25,12 @@ properties:
     default: INR
     description: ISO 4217 currency code
     example: INR
+  title:
+    type: string
+    minLength: 1
+    maxLength: 50
+    description: Short title for the transaction
+    example: Grocery run
   description:
     type: string
     maxLength: 255

@@ -1,0 +1,27 @@
+get:
+  tags:
+    - Transactions
+  summary: List distinct transaction titles
+  description: >
+    Returns a sorted list of distinct, non-empty transaction titles
+    previously recorded by the authenticated user. Intended for autocomplete
+    suggestions when creating a new transaction.
+  operationId: listTransactionTitles
+  responses:
+    '200':
+      description: Distinct titles retrieved successfully
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: string
+          example:
+            - Groceries
+            - June salary
+            - Monthly rent
+            - Swiggy
+    '401':
+      $ref: '../components/responses/UnauthorizedResponse.yaml'
+    '500':
+      $ref: '../components/responses/InternalServerErrorResponse.yaml'
