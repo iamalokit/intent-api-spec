@@ -41,16 +41,16 @@ get:
 
         term       = field operator value | "(" expr ")"
 
-        operator   = "eq" | "neq" | "gt" | "gte" | "lt" | "lte"
+        operator   = "eq" | "neq" | "gt" | "gte" | "lt" | "lte" | "co"
 
-        field      = "type" | "createdAt"
+        field      = "type" | "createdAt" | "accountId" | "budgetId" | "title"
 
-        value      = bare word (no quotes)
+        value      = bare word | "quoted string"
 
         ```
 
         Operator precedence follows standard rules — `and` binds tighter than `or`.
-        Use parentheses to override.
+        Use parentheses to override. Multi-word values must be wrapped in double quotes.
 
 
         **Supported fields**
@@ -63,6 +63,12 @@ get:
 
         | `createdAt`  | date-time | `gt`, `gte`, `lt`, `lte` | ISO 8601 UTC, e.g. `2026-06-01T00:00:00Z` |
 
+        | `accountId`  | UUID      | `eq`                   | Valid UUID                       |
+
+        | `budgetId`   | UUID      | `eq`                   | Valid UUID                       |
+
+        | `title`      | string    | `co`                   | Any string (case-insensitive partial match) |
+
 
         **Examples**
 
@@ -71,6 +77,12 @@ get:
         - `type neq CREDIT`
 
         - `createdAt gte 2026-06-01T00:00:00Z`
+
+        - `title co grocery`
+
+        - `title co "grocery run"`
+
+        - `type eq DEBIT and title co grocery`
 
         - `type eq DEBIT and createdAt gte 2026-06-01T00:00:00Z`
 
