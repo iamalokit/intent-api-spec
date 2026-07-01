@@ -21,6 +21,8 @@ tags:
     description: Spending budgets management
   - name: Transactions
     description: User credit and debit transaction recording
+  - name: Scheduler
+    description: On-demand goal allocation schedule execution
 
 paths:
   /api/v1/users:
@@ -51,6 +53,8 @@ paths:
     $ref: './paths/transactions-titles.yaml'
   /api/v1/transactions/{transactionId}:
     $ref: './paths/transactions-id.yaml'
+  /api/v1/scheduler/trigger:
+    $ref: './paths/scheduler-trigger.yaml'
   /api/v1/auth/send-otp:
     $ref: './paths/auth/send-otp.yaml'
   /api/v1/auth/verify-otp:

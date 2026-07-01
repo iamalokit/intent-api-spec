@@ -1,0 +1,23 @@
+post:
+  tags:
+    - Scheduler
+  summary: Trigger pending goal allocation schedules
+  description: >
+    Immediately checks for any goal allocation schedules that are due for the
+    authenticated user and executes them. Useful on app load to process
+    overdue allocations without waiting for the next background poll (which
+    runs every 60 seconds).
+
+
+    The operation is idempotent — if no schedules are due, it completes
+    without any side effects. Each due schedule creates an allocation job
+    that transfers the fixed amount from the user's unallocated balance into
+    the target goal.
+  operationId: triggerScheduler
+  responses:
+    '204':
+      description: Trigger completed — any due schedules have been processed
+    '401':
+      $ref: '../components/responses/UnauthorizedResponse.yaml'
+    '500':
+      $ref: '../components/responses/InternalServerErrorResponse.yaml'
