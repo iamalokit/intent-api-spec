@@ -47,6 +47,11 @@ properties:
     format: double
     description: Total DEBIT amount spent against this budget
     example: 3500.00
+  carryoverSpent:
+    type: number
+    format: double
+    description: Portion of carryoverAmount spent so far in the current period (min(spentAmount, carryoverAmount))
+    example: 1500.00
   updatedAt:
     type: string
     format: date-time

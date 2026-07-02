@@ -1,0 +1,54 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    description: Unique identifier of the period history entry
+    example: 3b241101-e2bb-4255-8caf-4136c566a962
+  budgetId:
+    type: string
+    format: uuid
+    description: ID of the budget this closed period belongs to
+    example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+  periodStart:
+    type: string
+    format: date
+    description: First day of the closed period (inclusive)
+    example: '2026-05-01'
+  periodEnd:
+    type: string
+    format: date
+    description: First day of the following period (exclusive upper bound)
+    example: '2026-06-01'
+  budgetedAmount:
+    type: number
+    format: double
+    description: Budget limit (amount + carryoverIn) that applied during this period
+    example: 12000.00
+  carryoverIn:
+    type: number
+    format: double
+    description: Balance carried into this period from the previous one
+    example: 2000.00
+  spentDuringPeriod:
+    type: number
+    format: double
+    description: Total DEBIT amount recorded against the budget as of when this period closed
+    example: 9500.00
+  carryoverOut:
+    type: number
+    format: double
+    description: Balance carried forward into the next period
+    example: 2500.00
+  lateSpentAmount:
+    type: number
+    format: double
+    description: >
+      DEBIT amount effective-dated within this period but entered into the
+      system only after the period had already closed (backdated/late-posted spend)
+    example: 350.00
+  closedAt:
+    type: string
+    format: date-time
+    description: Timestamp when this period was closed and the snapshot was recorded
+    example: '2026-06-01T00:00:00Z'

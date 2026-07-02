@@ -1,0 +1,11 @@
+allOf:
+  - $ref: '../common/PagedResponse.yaml'
+  - type: object
+    required:
+      - data
+    properties:
+      data:
+        type: array
+        items:
+          $ref: './BudgetPeriodHistoryResponse.yaml'
+        description: Closed period snapshots on the current page, ordered by closedAt descending

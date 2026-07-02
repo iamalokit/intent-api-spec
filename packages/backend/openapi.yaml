@@ -47,6 +47,10 @@ paths:
     $ref: './paths/budgets-id.yaml'
   /api/v1/budgets/{budgetId}/transactions:
     $ref: './paths/budgets-id-transactions.yaml'
+  /api/v1/budgets/{budgetId}/audit-log:
+    $ref: './paths/budgets-id-audit-log.yaml'
+  /api/v1/budgets/{budgetId}/period-history:
+    $ref: './paths/budgets-id-period-history.yaml'
   /api/v1/transactions:
     $ref: './paths/transactions.yaml'
   /api/v1/transactions/titles:
@@ -146,6 +150,16 @@ components:
       $ref: './components/schemas/budgets/BudgetListResponse.yaml'
     CreateBudgetTransactionRequest:
       $ref: './components/schemas/budgets/CreateBudgetTransactionRequest.yaml'
+    BudgetAuditField:
+      $ref: './components/schemas/budgets/BudgetAuditField.yaml'
+    BudgetAuditLogEntryResponse:
+      $ref: './components/schemas/budgets/BudgetAuditLogEntryResponse.yaml'
+    BudgetAuditLogListResponse:
+      $ref: './components/schemas/budgets/BudgetAuditLogListResponse.yaml'
+    BudgetPeriodHistoryResponse:
+      $ref: './components/schemas/budgets/BudgetPeriodHistoryResponse.yaml'
+    BudgetPeriodHistoryListResponse:
+      $ref: './components/schemas/budgets/BudgetPeriodHistoryListResponse.yaml'
     # Transactions
     TransactionType:
       $ref: './components/schemas/transactions/TransactionType.yaml'

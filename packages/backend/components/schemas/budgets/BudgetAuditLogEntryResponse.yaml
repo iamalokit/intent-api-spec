@@ -1,0 +1,29 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    description: Unique identifier of the audit log entry
+    example: 3b241101-e2bb-4255-8caf-4136c566a962
+  budgetId:
+    type: string
+    format: uuid
+    description: ID of the budget this edit was made to
+    example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+  field:
+    $ref: './BudgetAuditField.yaml'
+  oldValue:
+    type: string
+    nullable: true
+    description: Stringified value of the field before the edit
+    example: '10000.00'
+  newValue:
+    type: string
+    nullable: true
+    description: Stringified value of the field after the edit
+    example: '12000.00'
+  changedAt:
+    type: string
+    format: date-time
+    description: Timestamp when the edit was made
+    example: '2026-06-15T11:30:00Z'

@@ -1,0 +1,10 @@
+type: string
+description: The budget field a given audit log entry recorded a change for
+enum:
+  - NAME
+  - AMOUNT
+  - PERIOD_TYPE
+  - START_DATE
+  - IS_ACTIVE
+  - CARRYOVER_POLICY
+example: AMOUNT

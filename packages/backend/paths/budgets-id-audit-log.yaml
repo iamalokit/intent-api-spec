@@ -1,0 +1,69 @@
+get:
+  tags:
+    - Budgets
+  summary: List a budget's edit history
+  description: >
+    Returns field-level edit history for a budget, ordered by changedAt
+    descending. Returns 404 if the budget does not exist or does not belong
+    to the authenticated user.
+  operationId: listBudgetAuditLog
+  parameters:
+    - name: budgetId
+      in: path
+      required: true
+      description: Unique identifier of the budget
+      schema:
+        type: string
+        format: uuid
+      example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+    - name: token
+      in: query
+      required: false
+      description: >
+        Opaque pagination cursor returned in `paging.nextToken` or
+        `paging.previousToken` from a previous response. Omit to fetch
+        the first page.
+      schema:
+        type: string
+    - name: size
+      in: query
+      required: false
+      description: Number of entries per page. Capped at 100.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+  responses:
+    '200':
+      description: Audit log retrieved successfully
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/budgets/BudgetAuditLogListResponse.yaml'
+          example:
+            data:
+              - id: 3b241101-e2bb-4255-8caf-4136c566a962
+                budgetId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                field: AMOUNT
+                oldValue: '10000.00'
+                newValue: '12000.00'
+                changedAt: '2026-06-15T11:30:00Z'
+            paging:
+              currentToken: eyJjcmVhdGVkQXQiOiIyMDI2LTA2LTE1VDExOjMwOjAwWiIsImlkIjoiM2IyNDExMDEifQ==
+              nextToken: null
+              previousToken: null
+    '401':
+      $ref: '../components/responses/UnauthorizedResponse.yaml'
+    '404':
+      description: Budget not found or does not belong to the authenticated user
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/common/ErrorResponse.yaml'
+          example:
+            status: 404
+            error: Not Found
+            message: Budget not found
+    '500':
+      $ref: '../components/responses/InternalServerErrorResponse.yaml'
