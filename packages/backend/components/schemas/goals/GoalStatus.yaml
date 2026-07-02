@@ -1,4 +1,4 @@
 type: string
-enum: [ACTIVE, COMPLETED, CANCELLED]
+enum: [ACTIVE, INACTIVE, COMPLETED, CANCELLED]
 description: Current status of a saving goal
 example: ACTIVE
