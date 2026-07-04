@@ -1,0 +1,21 @@
+get:
+  tags:
+    - Icons
+  summary: List available icons
+  description: >
+    Returns the active curated icon catalog, ordered by sortOrder, for
+    selecting an icon on a budget or saving goal.
+  operationId: listIcons
+  responses:
+    '200':
+      description: Icon catalog retrieved successfully
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../components/schemas/icons/MasterIconResponse.yaml'
+    '401':
+      $ref: '../components/responses/UnauthorizedResponse.yaml'
+    '500':
+      $ref: '../components/responses/InternalServerErrorResponse.yaml'

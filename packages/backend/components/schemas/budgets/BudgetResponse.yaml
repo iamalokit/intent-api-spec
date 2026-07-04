@@ -57,3 +57,9 @@ properties:
     format: date-time
     description: Timestamp when the budget was last updated
     example: '2026-06-14T09:00:00Z'
+  iconId:
+    type: string
+    format: uuid
+    nullable: true
+    description: Identifier of the selected icon from the master icon catalog
+    example: 99429136-66ff-4b98-9335-e8edce6e9a51

@@ -50,3 +50,9 @@ properties:
       - $ref: './GoalAllocationRuleResponse.yaml'
     nullable: true
     description: Allocation rule associated with this goal, if any
+  iconId:
+    type: string
+    format: uuid
+    nullable: true
+    description: Identifier of the selected icon from the master icon catalog
+    example: 5b39aeaa-441b-4e17-9803-11eef70ab9ee

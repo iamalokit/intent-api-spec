@@ -1,0 +1,38 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    description: Unique identifier of the icon
+    example: 99429136-66ff-4b98-9335-e8edce6e9a51
+  key:
+    type: string
+    description: Stable, human-readable key for this icon
+    example: food
+  iconLibrary:
+    type: string
+    description: Icon library/font this icon belongs to
+    example: Material
+  iconName:
+    type: string
+    description: Icon name/ligature within its library
+    example: restaurant
+  category:
+    type: string
+    nullable: true
+    description: Grouping used to organize the icon picker UI
+    example: Food
+  keywords:
+    type: string
+    nullable: true
+    description: Comma-separated search keywords for this icon
+    example: food,dining,restaurant,groceries
+  defaultColor:
+    type: string
+    nullable: true
+    description: Suggested default color for this icon (not currently applied by clients)
+    example: '#F97316'
+  sortOrder:
+    type: integer
+    description: Display order within the icon picker
+    example: 10

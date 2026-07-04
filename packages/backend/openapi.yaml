@@ -19,6 +19,8 @@ tags:
     description: Saving goals management
   - name: Budgets
     description: Spending budgets management
+  - name: Icons
+    description: Curated icon catalog for budgets and saving goals
   - name: Transactions
     description: User credit and debit transaction recording
   - name: Scheduler
@@ -51,6 +53,8 @@ paths:
     $ref: './paths/budgets-id-audit-log.yaml'
   /api/v1/budgets/{budgetId}/period-history:
     $ref: './paths/budgets-id-period-history.yaml'
+  /api/v1/icons:
+    $ref: './paths/icons.yaml'
   /api/v1/transactions:
     $ref: './paths/transactions.yaml'
   /api/v1/transactions/titles:
@@ -160,6 +164,9 @@ components:
       $ref: './components/schemas/budgets/BudgetPeriodHistoryResponse.yaml'
     BudgetPeriodHistoryListResponse:
       $ref: './components/schemas/budgets/BudgetPeriodHistoryListResponse.yaml'
+    # Icons
+    MasterIconResponse:
+      $ref: './components/schemas/icons/MasterIconResponse.yaml'
     # Transactions
     TransactionType:
       $ref: './components/schemas/transactions/TransactionType.yaml'

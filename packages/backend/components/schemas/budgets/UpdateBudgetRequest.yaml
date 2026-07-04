@@ -25,3 +25,8 @@ properties:
     example: true
   carryoverPolicy:
     $ref: './BudgetCarryoverPolicy.yaml'
+  iconId:
+    type: string
+    format: uuid
+    description: Identifier of the selected icon from the master icon catalog
+    example: 99429136-66ff-4b98-9335-e8edce6e9a51
