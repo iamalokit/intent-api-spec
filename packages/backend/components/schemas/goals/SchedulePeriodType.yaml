@@ -1,0 +1,8 @@
+type: string
+description: The calendar cadence for a SCHEDULED allocation rule trigger
+enum:
+  - DAILY
+  - WEEKLY
+  - MONTHLY
+  - YEARLY
+example: MONTHLY

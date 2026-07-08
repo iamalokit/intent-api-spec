@@ -1,0 +1,7 @@
+type: string
+description: Category of event that fires a goal allocation rule
+enum:
+  - SCHEDULED
+  - INCOME_RECEIVED
+  - MANUAL
+example: SCHEDULED
