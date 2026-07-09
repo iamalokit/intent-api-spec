@@ -21,6 +21,13 @@ properties:
     default: INR
     description: ISO 4217 currency code
     example: INR
+  currentAmount:
+    type: number
+    minimum: 0
+    description: >-
+      Optional initial amount already saved towards this goal. Deducted from the
+      user's unallocated account balance, same as a manual deposit.
+    example: 5000
   targetDate:
     type: string
     format: date

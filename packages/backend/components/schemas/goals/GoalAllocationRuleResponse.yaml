@@ -12,6 +12,12 @@ properties:
       - $ref: './SchedulePeriodType.yaml'
     nullable: true
     description: Calendar cadence, present only when triggerType is SCHEDULED
+  startDate:
+    type: string
+    format: date
+    nullable: true
+    description: Date the SCHEDULED plan's first execution was anchored to, if set
+    example: '2026-08-01'
   ruleType:
     type: string
     description: Type of allocation calculation

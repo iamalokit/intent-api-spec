@@ -7,6 +7,14 @@ properties:
     $ref: './TriggerType.yaml'
   schedulePeriodType:
     $ref: './SchedulePeriodType.yaml'
+  startDate:
+    type: string
+    format: date
+    description: >-
+      Date the SCHEDULED plan should start from — the first execution is computed
+      from this date instead of the current date. A past or omitted value falls
+      back to starting from now.
+    example: '2026-08-01'
   ruleType:
     type: string
     maxLength: 50
