@@ -25,6 +25,8 @@ tags:
     description: User credit and debit transaction recording
   - name: Scheduler
     description: On-demand goal allocation schedule execution
+  - name: Notifications
+    description: Push notification device token registration
 
 paths:
   /api/v1/users:
@@ -63,6 +65,8 @@ paths:
     $ref: './paths/transactions-id.yaml'
   /api/v1/scheduler/trigger:
     $ref: './paths/scheduler-trigger.yaml'
+  /api/v1/notifications/device-tokens:
+    $ref: './paths/notifications-device-tokens.yaml'
   /api/v1/auth/send-otp:
     $ref: './paths/auth/send-otp.yaml'
   /api/v1/auth/verify-otp:
@@ -178,6 +182,13 @@ components:
       $ref: './components/schemas/transactions/TransactionListResponse.yaml'
     UpdateTransactionRequest:
       $ref: './components/schemas/transactions/UpdateTransactionRequest.yaml'
+    # Notifications
+    DevicePlatform:
+      $ref: './components/schemas/notifications/DevicePlatform.yaml'
+    RegisterDeviceTokenRequest:
+      $ref: './components/schemas/notifications/RegisterDeviceTokenRequest.yaml'
+    DeviceTokenResponse:
+      $ref: './components/schemas/notifications/DeviceTokenResponse.yaml'
   responses:
     UnauthorizedResponse:
       $ref: './components/responses/UnauthorizedResponse.yaml'

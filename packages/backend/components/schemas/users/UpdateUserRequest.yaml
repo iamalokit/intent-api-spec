@@ -22,3 +22,7 @@ properties:
     maxLength: 50
     description: IANA timezone identifier for the user
     example: Asia/Kolkata
+  pushNotificationsEnabled:
+    type: boolean
+    description: Whether the user wants to receive push notifications
+    example: true

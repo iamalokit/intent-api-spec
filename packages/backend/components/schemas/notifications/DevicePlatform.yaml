@@ -1,0 +1,4 @@
+type: string
+enum: [IOS, ANDROID]
+description: Mobile OS platform the device token was issued for
+example: IOS

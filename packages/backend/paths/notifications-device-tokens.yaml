@@ -1,0 +1,74 @@
+post:
+  tags:
+    - Notifications
+  summary: Register a device push token
+  description: >
+    Registers (or refreshes) an Expo push token for the authenticated user's
+    device, so the backend can send push notifications to it. Idempotent —
+    calling this again with the same token for the same user simply refreshes
+    it. If the token was previously registered to a different user (e.g. app
+    reinstalled or a different account signed in on the same device), that
+    prior registration is deactivated.
+  operationId: registerDeviceToken
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components/schemas/notifications/RegisterDeviceTokenRequest.yaml'
+        example:
+          expoPushToken: ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]
+          platform: IOS
+  responses:
+    '200':
+      description: Device token registered successfully
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/notifications/DeviceTokenResponse.yaml'
+          example:
+            id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+            platform: IOS
+            active: true
+            createdAt: '2026-06-07T10:30:00Z'
+            updatedAt: '2026-06-07T10:30:00Z'
+    '400':
+      description: Validation error — missing or invalid fields
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/common/ErrorResponse.yaml'
+          example:
+            status: 400
+            error: Bad Request
+            message: expoPushToken must not be blank
+    '401':
+      $ref: '../components/responses/UnauthorizedResponse.yaml'
+    '500':
+      $ref: '../components/responses/InternalServerErrorResponse.yaml'
+
+delete:
+  tags:
+    - Notifications
+  summary: Unregister a device push token
+  description: >
+    Deactivates a previously registered Expo push token for the authenticated
+    user, so it no longer receives pushes. Safe to call even if the token is
+    already inactive or was never registered. Clients should call this on
+    sign-out.
+  operationId: unregisterDeviceToken
+  parameters:
+    - name: expoPushToken
+      in: query
+      required: true
+      description: The Expo push token to unregister
+      schema:
+        type: string
+      example: ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]
+  responses:
+    '204':
+      description: Device token unregistered successfully
+    '401':
+      $ref: '../components/responses/UnauthorizedResponse.yaml'
+    '500':
+      $ref: '../components/responses/InternalServerErrorResponse.yaml'

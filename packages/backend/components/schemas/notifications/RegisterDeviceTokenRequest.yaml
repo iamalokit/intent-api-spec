@@ -1,0 +1,13 @@
+type: object
+required:
+  - expoPushToken
+  - platform
+properties:
+  expoPushToken:
+    type: string
+    minLength: 1
+    maxLength: 255
+    description: Expo push token obtained from `Notifications.getExpoPushTokenAsync()` on the device
+    example: ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]
+  platform:
+    $ref: './DevicePlatform.yaml'

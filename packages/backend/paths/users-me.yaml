@@ -21,6 +21,7 @@ get:
             lastName: Jindal
             email: user@example.com
             timezone: Asia/Kolkata
+            pushNotificationsEnabled: true
             createdAt: '2026-06-04T10:30:00Z'
     '401':
       $ref: '../components/responses/UnauthorizedResponse.yaml'
@@ -59,6 +60,7 @@ put:
           lastName: Jindal
           email: user@example.com
           timezone: Asia/Kolkata
+          pushNotificationsEnabled: true
   responses:
     '200':
       description: User profile updated successfully
@@ -74,6 +76,7 @@ put:
             lastName: Jindal
             email: user@example.com
             timezone: Asia/Kolkata
+            pushNotificationsEnabled: true
             createdAt: '2026-06-04T10:30:00Z'
     '400':
       description: Validation error — invalid field values

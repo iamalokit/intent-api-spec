@@ -1,0 +1,23 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    description: Unique identifier of the registered device token
+    example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+  platform:
+    $ref: './DevicePlatform.yaml'
+  active:
+    type: boolean
+    description: Whether this device token is currently active and eligible to receive pushes
+    example: true
+  createdAt:
+    type: string
+    format: date-time
+    description: Timestamp when the device token was first registered
+    example: '2026-06-07T10:30:00Z'
+  updatedAt:
+    type: string
+    format: date-time
+    description: Timestamp when the device token was last refreshed
+    example: '2026-06-07T10:30:00Z'

@@ -33,6 +33,10 @@ properties:
     description: IANA timezone identifier for the user
     example: Asia/Kolkata
     nullable: true
+  pushNotificationsEnabled:
+    type: boolean
+    description: Whether the user has push notifications enabled
+    example: true
   createdAt:
     type: string
     format: date-time
