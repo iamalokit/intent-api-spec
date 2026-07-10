@@ -1,0 +1,24 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    description: Unique identifier of the recurring transaction rule
+    example: 9c1e6679-7425-40de-944b-e07fc1f90ae8
+  schedulePeriodType:
+    $ref: '../common/SchedulePeriodType.yaml'
+  startDate:
+    type: string
+    format: date
+    nullable: true
+    description: Date the recurring schedule's first reminder was anchored to, if set
+    example: '2026-08-01'
+  enabled:
+    type: boolean
+    description: Whether this recurring rule is currently sending reminders
+    example: true
+  nextExecutionAt:
+    type: string
+    format: date-time
+    description: When the next reminder for this rule is due
+    example: '2026-08-01T00:00:00Z'

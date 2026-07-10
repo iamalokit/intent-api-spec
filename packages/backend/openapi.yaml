@@ -63,6 +63,8 @@ paths:
     $ref: './paths/transactions-titles.yaml'
   /api/v1/transactions/{transactionId}:
     $ref: './paths/transactions-id.yaml'
+  /api/v1/recurring-transaction-rules/{ruleId}:
+    $ref: './paths/recurring-transaction-rules-id.yaml'
   /api/v1/scheduler/trigger:
     $ref: './paths/scheduler-trigger.yaml'
   /api/v1/notifications/device-tokens:
@@ -87,6 +89,8 @@ components:
       $ref: './components/schemas/common/PagedResponse.yaml'
     PhoneNumberRequest:
       $ref: './components/schemas/common/PhoneNumberRequest.yaml'
+    SchedulePeriodType:
+      $ref: './components/schemas/common/SchedulePeriodType.yaml'
     # Auth
     SendOtpRequest:
       $ref: './components/schemas/auth/SendOtpRequest.yaml'
@@ -182,6 +186,12 @@ components:
       $ref: './components/schemas/transactions/TransactionListResponse.yaml'
     UpdateTransactionRequest:
       $ref: './components/schemas/transactions/UpdateTransactionRequest.yaml'
+    RecurringTransactionRuleRequest:
+      $ref: './components/schemas/transactions/RecurringTransactionRuleRequest.yaml'
+    RecurringTransactionRuleResponse:
+      $ref: './components/schemas/transactions/RecurringTransactionRuleResponse.yaml'
+    UpdateRecurringTransactionRuleRequest:
+      $ref: './components/schemas/transactions/UpdateRecurringTransactionRuleRequest.yaml'
     # Notifications
     DevicePlatform:
       $ref: './components/schemas/notifications/DevicePlatform.yaml'

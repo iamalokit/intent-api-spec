@@ -1,0 +1,8 @@
+type: string
+description: The calendar cadence for a scheduled recurrence (allocation rule or recurring transaction)
+enum:
+  - DAILY
+  - WEEKLY
+  - MONTHLY
+  - YEARLY
+example: MONTHLY

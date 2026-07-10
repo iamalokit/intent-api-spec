@@ -1,0 +1,6 @@
+type: object
+properties:
+  enabled:
+    type: boolean
+    description: Whether the recurring rule should keep sending reminders
+    example: false

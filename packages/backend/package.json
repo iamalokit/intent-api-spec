@@ -1,6 +1,6 @@
 {
   "name": "@intent/backend-api",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "OpenAPI specification for Intent Backend Service",
   "files": [
     "dist/openapi.yaml"

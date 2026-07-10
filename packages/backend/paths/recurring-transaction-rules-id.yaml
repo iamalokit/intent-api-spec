@@ -1,0 +1,56 @@
+put:
+  tags:
+    - Transactions
+  summary: Enable or disable a recurring transaction rule
+  description: >
+    Updates a recurring transaction rule. `enabled` is the only field that can
+    be changed — every other property of the rule is fixed at creation time
+    (set when the originating transaction was created with `recurringRule`).
+    Setting `enabled` to `false` stops future reminders; setting it back to
+    `true` resumes them. Returns 404 if the rule does not exist or does not
+    belong to the authenticated user.
+  operationId: updateRecurringTransactionRule
+  parameters:
+    - name: ruleId
+      in: path
+      required: true
+      description: Unique identifier of the recurring transaction rule
+      schema:
+        type: string
+        format: uuid
+      example: 9c1e6679-7425-40de-944b-e07fc1f90ae8
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components/schemas/transactions/UpdateRecurringTransactionRuleRequest.yaml'
+        example:
+          enabled: false
+  responses:
+    '200':
+      description: Recurring transaction rule updated successfully
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/transactions/RecurringTransactionRuleResponse.yaml'
+          example:
+            id: 9c1e6679-7425-40de-944b-e07fc1f90ae8
+            schedulePeriodType: MONTHLY
+            startDate: '2026-08-01'
+            enabled: false
+            nextExecutionAt: '2026-09-01T00:00:00Z'
+    '401':
+      $ref: '../components/responses/UnauthorizedResponse.yaml'
+    '404':
+      description: Recurring transaction rule not found or does not belong to the authenticated user
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/common/ErrorResponse.yaml'
+          example:
+            status: 404
+            error: Not Found
+            message: Recurring transaction rule not found
+    '500':
+      $ref: '../components/responses/InternalServerErrorResponse.yaml'

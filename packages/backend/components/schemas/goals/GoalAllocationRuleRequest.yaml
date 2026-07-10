@@ -6,7 +6,7 @@ properties:
   triggerType:
     $ref: './TriggerType.yaml'
   schedulePeriodType:
-    $ref: './SchedulePeriodType.yaml'
+    $ref: '../common/SchedulePeriodType.yaml'
   startDate:
     type: string
     format: date

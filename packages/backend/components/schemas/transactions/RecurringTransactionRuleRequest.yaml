@@ -1,0 +1,14 @@
+type: object
+required:
+  - schedulePeriodType
+properties:
+  schedulePeriodType:
+    $ref: '../common/SchedulePeriodType.yaml'
+  startDate:
+    type: string
+    format: date
+    description: >-
+      Date the recurring schedule should start from — the first reminder is
+      computed from this date instead of the current date. A past or omitted
+      value falls back to starting from now.
+    example: '2026-08-01'

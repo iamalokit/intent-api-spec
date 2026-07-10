@@ -46,3 +46,5 @@ properties:
     format: date
     description: Date when the transaction occurred (YYYY-MM-DD). Defaults to today if not provided.
     example: '2026-06-27'
+  recurringRule:
+    $ref: './RecurringTransactionRuleRequest.yaml'

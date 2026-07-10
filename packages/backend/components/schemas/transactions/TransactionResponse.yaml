@@ -45,3 +45,8 @@ properties:
     format: date-time
     description: Timestamp when the transaction was last updated
     example: '2026-06-19T10:30:00Z'
+  recurringRule:
+    allOf:
+      - $ref: './RecurringTransactionRuleResponse.yaml'
+    nullable: true
+    description: Recurring schedule this transaction originated, if any
