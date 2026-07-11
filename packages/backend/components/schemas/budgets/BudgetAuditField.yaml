@@ -5,6 +5,6 @@ enum:
   - AMOUNT
   - PERIOD_TYPE
   - START_DATE
-  - IS_ACTIVE
+  - STATUS
   - CARRYOVER_POLICY
 example: AMOUNT

@@ -1,0 +1,11 @@
+allOf:
+  - $ref: '../common/PagedResponse.yaml'
+  - type: object
+    required:
+      - data
+    properties:
+      data:
+        type: array
+        items:
+          $ref: './RecurringTransactionRuleResponse.yaml'
+        description: Recurring transaction rules on the current page, ordered by creation date descending

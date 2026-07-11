@@ -1,0 +1,4 @@
+type: string
+enum: [ACTIVE, INACTIVE, ARCHIVED]
+description: Current status of an expenditure budget
+example: ACTIVE

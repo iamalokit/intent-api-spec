@@ -5,6 +5,37 @@ properties:
     format: uuid
     description: Unique identifier of the recurring transaction rule
     example: 9c1e6679-7425-40de-944b-e07fc1f90ae8
+  accountId:
+    type: string
+    format: uuid
+    description: Account the recurring transaction is logged against
+    example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+  budgetId:
+    type: string
+    format: uuid
+    nullable: true
+    description: Budget the recurring transaction is linked to, if any
+    example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+  title:
+    type: string
+    description: Title of the recurring transaction
+    example: Netflix subscription
+  description:
+    type: string
+    nullable: true
+    description: Optional longer description of the recurring transaction
+    example: Monthly streaming subscription
+  type:
+    $ref: '../transactions/TransactionType.yaml'
+  amount:
+    type: number
+    format: double
+    description: Amount of the recurring transaction
+    example: 649.00
+  currency:
+    type: string
+    description: ISO 4217 currency code
+    example: INR
   schedulePeriodType:
     $ref: '../common/SchedulePeriodType.yaml'
   startDate:

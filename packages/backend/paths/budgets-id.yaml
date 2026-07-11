@@ -28,7 +28,7 @@ get:
             periodType: MONTHLY
             amount: 10000.00
             startDate: '2026-06-01'
-            isActive: true
+            status: ACTIVE
             createdAt: '2026-06-14T09:00:00Z'
             updatedAt: '2026-06-14T09:00:00Z'
     '401':
@@ -54,6 +54,9 @@ put:
     Updates an existing budget. Only fields included in the request body are
     updated; omitted fields retain their current values. Returns 404 if the
     budget does not exist or does not belong to the authenticated user.
+    An archived budget is read-only: any request that changes a field other
+    than `status` while the budget's current status is `ARCHIVED` (and the
+    request does not itself move `status` away from `ARCHIVED`) returns 409.
   operationId: updateBudget
   parameters:
     - name: budgetId
@@ -73,7 +76,7 @@ put:
         example:
           name: Groceries & Dining
           amount: 12000.00
-          isActive: true
+          status: ACTIVE
   responses:
     '200':
       description: Budget updated successfully
@@ -87,7 +90,7 @@ put:
             periodType: MONTHLY
             amount: 12000.00
             startDate: '2026-06-01'
-            isActive: true
+            status: ACTIVE
             createdAt: '2026-06-14T09:00:00Z'
             updatedAt: '2026-06-15T11:30:00Z'
     '400':
@@ -112,5 +115,15 @@ put:
             status: 404
             error: Not Found
             message: Budget not found
+    '409':
+      description: Conflict — the budget is archived and read-only
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/common/ErrorResponse.yaml'
+          example:
+            status: 409
+            error: Conflict
+            message: Archived budgets are read-only; unarchive it first
     '500':
       $ref: '../components/responses/InternalServerErrorResponse.yaml'

@@ -24,7 +24,7 @@ get:
 
         operator   = "eq" | "neq"
 
-        field      = "isActive" | "periodType"
+        field      = "status" | "periodType"
 
         value      = bare word (no quotes)
 
@@ -36,27 +36,27 @@ get:
 
         **Supported fields**
 
-        | Field        | Type    | Allowed values                  |
+        | Field        | Type    | Allowed values                    |
 
-        |--------------|---------|---------------------------------|
+        |--------------|---------|------------------------------------|
 
-        | `isActive`   | boolean | `true`, `false`                 |
+        | `status`     | enum    | `ACTIVE`, `INACTIVE`, `ARCHIVED`  |
 
-        | `periodType` | enum    | `WEEKLY`, `MONTHLY`, `YEARLY`   |
+        | `periodType` | enum    | `WEEKLY`, `MONTHLY`, `YEARLY`     |
 
 
         **Examples**
 
-        - `isActive eq true`
+        - `status eq ACTIVE`
 
         - `periodType eq MONTHLY`
 
-        - `isActive eq true and periodType eq MONTHLY`
+        - `status eq ACTIVE and periodType eq MONTHLY`
 
         - `periodType eq WEEKLY or periodType eq MONTHLY`
       schema:
         type: string
-      example: isActive eq true and periodType eq MONTHLY
+      example: status eq ACTIVE and periodType eq MONTHLY
     - name: token
       in: query
       required: false
@@ -89,7 +89,7 @@ get:
                 periodType: MONTHLY
                 amount: 10000.00
                 startDate: '2026-06-01'
-                isActive: true
+                status: ACTIVE
                 createdAt: '2026-06-14T09:00:00Z'
                 updatedAt: '2026-06-14T09:00:00Z'
             paging:
@@ -133,7 +133,7 @@ post:
             periodType: MONTHLY
             amount: 10000.00
             startDate: '2026-06-01'
-            isActive: true
+            status: ACTIVE
             createdAt: '2026-06-14T09:00:00Z'
             updatedAt: '2026-06-14T09:00:00Z'
     '400':

@@ -7,6 +7,7 @@ post:
     The budget ID is taken from the path — do not include it in the request body.
     Currency defaults to `INR` if not provided.
     Returns 404 if the budget does not exist or does not belong to the authenticated user.
+    Returns 409 if the budget is archived.
   operationId: createBudgetTransaction
   parameters:
     - name: budgetId
@@ -68,5 +69,15 @@ post:
             status: 404
             error: Not Found
             message: Budget not found
+    '409':
+      description: Conflict — the budget is archived and read-only
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/common/ErrorResponse.yaml'
+          example:
+            status: 409
+            error: Conflict
+            message: Archived budgets are read-only; unarchive it first
     '500':
       $ref: '../components/responses/InternalServerErrorResponse.yaml'

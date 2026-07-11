@@ -63,6 +63,8 @@ paths:
     $ref: './paths/transactions-titles.yaml'
   /api/v1/transactions/{transactionId}:
     $ref: './paths/transactions-id.yaml'
+  /api/v1/recurring-transaction-rules:
+    $ref: './paths/recurring-transaction-rules.yaml'
   /api/v1/recurring-transaction-rules/{ruleId}:
     $ref: './paths/recurring-transaction-rules-id.yaml'
   /api/v1/scheduler/trigger:
@@ -148,6 +150,8 @@ components:
     GoalTransactionListResponse:
       $ref: './components/schemas/goals/GoalTransactionListResponse.yaml'
     # Budgets
+    BudgetStatus:
+      $ref: './components/schemas/budgets/BudgetStatus.yaml'
     BudgetPeriodType:
       $ref: './components/schemas/budgets/BudgetPeriodType.yaml'
     BudgetCarryoverPolicy:
@@ -190,6 +194,8 @@ components:
       $ref: './components/schemas/transactions/RecurringTransactionRuleRequest.yaml'
     RecurringTransactionRuleResponse:
       $ref: './components/schemas/transactions/RecurringTransactionRuleResponse.yaml'
+    RecurringTransactionRuleListResponse:
+      $ref: './components/schemas/transactions/RecurringTransactionRuleListResponse.yaml'
     UpdateRecurringTransactionRuleRequest:
       $ref: './components/schemas/transactions/UpdateRecurringTransactionRuleRequest.yaml'
     # Notifications

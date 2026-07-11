@@ -19,10 +19,8 @@ properties:
     format: date
     description: Date from which the budget period begins (YYYY-MM-DD)
     example: '2026-07-01'
-  isActive:
-    type: boolean
-    description: Whether the budget is currently active
-    example: true
+  status:
+    $ref: './BudgetStatus.yaml'
   carryoverPolicy:
     $ref: './BudgetCarryoverPolicy.yaml'
   iconId:
