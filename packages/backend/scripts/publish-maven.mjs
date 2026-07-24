@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Bundles this package's OpenAPI spec and installs it into the local Maven
-// repository (~/.m2) as com.iamalokit.intent:api-spec:<version>, packaging
+// repository (~/.m2) as com.aurum.intent:api-spec:<version>, packaging
 // "yaml". intent-backend-service pins to a specific version of this artifact
 // via <api-spec.version> in its pom.xml — bump the version below (in
 // package.json) and re-run this script whenever the spec changes, then bump
@@ -36,12 +36,12 @@ function findMavenCommand() {
 console.log(`Building spec bundle for version ${version}...`);
 execSync('pnpm run build', { stdio: 'inherit', cwd: packageDir });
 
-console.log(`Installing com.iamalokit.intent:api-spec:${version} into the local Maven repo...`);
+console.log(`Installing com.aurum.intent:api-spec:${version} into the local Maven repo...`);
 const mvn = findMavenCommand();
 execSync(
   `"${mvn}" install:install-file ` +
     '-Dfile=dist/openapi.yaml ' +
-    '-DgroupId=com.iamalokit.intent ' +
+    '-DgroupId=com.aurum.intent ' +
     '-DartifactId=api-spec ' +
     `-Dversion=${version} ` +
     '-Dpackaging=yaml ' +
