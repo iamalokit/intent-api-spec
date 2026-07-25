@@ -1,5 +1,5 @@
 apis:
-  intent-api@v1:
+  silver-api@v1:
     root: ./openapi.yaml
 
 theme:

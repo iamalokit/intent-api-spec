@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
-  title: Intent Backend Service
+  title: Silver Backend Service
   version: 0.0.1
-  description: API documentation for the Intent Backend Service
+  description: API documentation for the Silver Backend Service
 
 servers:
   - url: http://localhost:8080
