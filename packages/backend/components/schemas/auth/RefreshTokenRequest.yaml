@@ -4,5 +4,5 @@ required:
 properties:
   refreshToken:
     type: string
-    description: The refresh token previously issued by verify-otp or a prior refresh call
+    description: The refresh token previously issued by verify-phone or a prior refresh call
     example: "550e8400-e29b-41d4-a716-446655440000"

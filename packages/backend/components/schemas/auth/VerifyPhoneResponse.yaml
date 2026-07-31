@@ -2,7 +2,7 @@ type: object
 properties:
   message:
     type: string
-    example: OTP verified successfully
+    example: Phone verified successfully
   token:
     type: string
     description: JWT access token (15-minute lifetime)

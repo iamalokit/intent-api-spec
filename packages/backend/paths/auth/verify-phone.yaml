@@ -1,0 +1,40 @@
+post:
+  tags:
+    - Auth
+  summary: Verify a Firebase phone-auth ID token
+  description: >
+    Verifies a Firebase ID token obtained after the client confirms the OTP
+    via the Firebase Phone Auth SDK (OTP delivery and confirmation happen
+    entirely client-side). On success, returns a JWT token to be used for
+    authenticated requests.
+  operationId: verifyPhone
+  security: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/auth/VerifyPhoneRequest.yaml'
+        example:
+          idToken: eyJhbGciOiJSUzI1NiIsImtpZCI6...
+  responses:
+    '200':
+      description: Phone verified successfully
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/auth/VerifyPhoneResponse.yaml'
+          example:
+            message: Phone verified successfully
+    '401':
+      description: Invalid or expired Firebase ID token
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/common/ErrorResponse.yaml'
+          example:
+            status: 401
+            error: Unauthorized
+            message: Invalid or expired phone verification token.
+    '500':
+      $ref: '../../components/responses/InternalServerErrorResponse.yaml'

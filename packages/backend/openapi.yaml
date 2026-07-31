@@ -71,10 +71,8 @@ paths:
     $ref: './paths/scheduler-trigger.yaml'
   /api/v1/notifications/device-tokens:
     $ref: './paths/notifications-device-tokens.yaml'
-  /api/v1/auth/send-otp:
-    $ref: './paths/auth/send-otp.yaml'
-  /api/v1/auth/verify-otp:
-    $ref: './paths/auth/verify-otp.yaml'
+  /api/v1/auth/verify-phone:
+    $ref: './paths/auth/verify-phone.yaml'
   /api/v1/auth/sign-out:
     $ref: './paths/auth/sign-out.yaml'
   /api/v1/auth/refresh:
@@ -89,19 +87,13 @@ components:
       $ref: './components/schemas/common/PageInfo.yaml'
     PagedResponse:
       $ref: './components/schemas/common/PagedResponse.yaml'
-    PhoneNumberRequest:
-      $ref: './components/schemas/common/PhoneNumberRequest.yaml'
     SchedulePeriodType:
       $ref: './components/schemas/common/SchedulePeriodType.yaml'
     # Auth
-    SendOtpRequest:
-      $ref: './components/schemas/auth/SendOtpRequest.yaml'
-    SendOtpResponse:
-      $ref: './components/schemas/auth/SendOtpResponse.yaml'
-    VerifyOtpRequest:
-      $ref: './components/schemas/auth/VerifyOtpRequest.yaml'
-    VerifyOtpResponse:
-      $ref: './components/schemas/auth/VerifyOtpResponse.yaml'
+    VerifyPhoneRequest:
+      $ref: './components/schemas/auth/VerifyPhoneRequest.yaml'
+    VerifyPhoneResponse:
+      $ref: './components/schemas/auth/VerifyPhoneResponse.yaml'
     SignOutRequest:
       $ref: './components/schemas/auth/SignOutRequest.yaml'
     RefreshTokenRequest:

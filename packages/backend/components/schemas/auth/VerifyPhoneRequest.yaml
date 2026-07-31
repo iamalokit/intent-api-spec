@@ -1,0 +1,12 @@
+type: object
+required:
+  - idToken
+properties:
+  idToken:
+    type: string
+    description: >
+      Firebase ID token obtained after the client confirms the OTP via the
+      Firebase Phone Auth SDK. The backend verifies this token's signature
+      and validity via the Firebase Admin SDK and trusts its phone-number
+      claim.
+    example: eyJhbGciOiJSUzI1NiIsImtpZCI6...
