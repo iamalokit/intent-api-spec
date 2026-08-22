@@ -3,6 +3,15 @@
 extends:
   - recommended
 
+rules:
+  # The only running instance today is the local backend on :8080; there is no
+  # deployed host to point at yet. Re-enable once one exists.
+  no-server-example.com: off
+
+  # The license is proprietary, so there is no public license document to link.
+  # `info-license` (name required) stays on; only the url check is dropped.
+  info-license-strict: off
+
 apis:
   silver-api@v1:
     root: ./openapi.yaml
