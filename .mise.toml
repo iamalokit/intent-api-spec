@@ -1,0 +1,8 @@
+[tools]
+node = "lts"
+pnpm = "latest"
+# java + maven are needed only by `pnpm --filter @silver/backend-api run
+# publish:maven`, which installs the bundled spec into ~/.m2 as
+# com.aurum.silver:api-spec. Kept in sync with intent-backend-service/.mise.toml.
+java = "temurin-21"
+maven = "latest"
