@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "lint": "pnpm -r run lint",
     "build": "pnpm -r run build",
+    "build:docs": "pnpm -r run build:docs",
     "preview": "pnpm -r run preview"
-  }
+  },
+  "packageManager": "pnpm@10.27.0"
 }
