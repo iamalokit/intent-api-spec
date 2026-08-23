@@ -10,6 +10,7 @@ properties:
   schedulePeriodType:
     allOf:
       - $ref: '../common/SchedulePeriodType.yaml'
+    type: string
     nullable: true
     description: Calendar cadence, present only when triggerType is SCHEDULED
   startDate:

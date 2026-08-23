@@ -6,7 +6,9 @@
     "dist/openapi.yaml"
   ],
   "scripts": {
+    "lint": "redocly lint openapi.yaml",
     "build": "redocly bundle openapi.yaml -o dist/openapi.yaml",
+    "build:docs": "redocly build-docs openapi.yaml -o dist/index.html",
     "preview": "redocly preview-docs openapi.yaml --port 8082",
     "publish:maven": "node scripts/publish-maven.mjs"
   },

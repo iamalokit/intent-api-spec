@@ -1,0 +1,84 @@
+name: API spec
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Supersede in-flight PR runs, but never interrupt a master run mid-deploy.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  validate:
+    name: Validate spec and render docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # pnpm version is resolved from "packageManager" in the root package.json.
+      - uses: pnpm/action-setup@v6
+
+      # Node major mirrors `node = "lts"` in .mise.toml — keep the two in step.
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # `run` is mandatory here: bare `pnpm docs` would hit npm's built-in `docs`
+      # command and silently no-op with exit 0 instead of running the script.
+      - name: Lint OpenAPI spec
+        run: pnpm --filter @silver/backend-api run lint --format=github-actions
+
+      - name: Check spec bundles
+        run: pnpm run build
+
+      - name: Render HTML docs
+        run: pnpm run build:docs
+
+      - name: Assemble site
+        run: |
+          mkdir -p site
+          cp packages/backend/dist/index.html  site/index.html
+          cp packages/backend/dist/openapi.yaml site/openapi.yaml
+
+      # Always uploaded, so PR runs have a downloadable report.
+      - name: Upload docs artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: api-docs
+          path: site/
+          if-no-files-found: error
+
+      - name: Upload Pages artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: site/
+
+  deploy:
+    name: Publish to GitHub Pages
+    needs: validate
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

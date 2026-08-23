@@ -48,6 +48,7 @@ properties:
   recurringRule:
     allOf:
       - $ref: './RecurringTransactionRuleResponse.yaml'
+    type: object
     nullable: true
     description: Recurring schedule this transaction originated, if any
   receiptKey:

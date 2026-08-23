@@ -27,6 +27,7 @@ post:
         example:
           accountId: a1b2c3d4-5678-90ab-cdef-1234567890ab
           type: DEBIT
+          title: Grocery run
           amount: 1500.00
           currency: INR
           description: Monthly grocery shopping

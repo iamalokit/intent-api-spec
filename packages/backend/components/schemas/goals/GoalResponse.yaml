@@ -48,6 +48,7 @@ properties:
   allocationRule:
     allOf:
       - $ref: './GoalAllocationRuleResponse.yaml'
+    type: object
     nullable: true
     description: Allocation rule associated with this goal, if any
   iconId:

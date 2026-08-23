@@ -3,6 +3,8 @@ info:
   title: Silver Backend Service
   version: 0.0.1
   description: API documentation for the Silver Backend Service
+  license:
+    name: Proprietary - All Rights Reserved
 
 servers:
   - url: http://localhost:8080
