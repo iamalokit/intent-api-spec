@@ -6,7 +6,7 @@
 // package.json) and re-run this script whenever the spec changes, then bump
 // the matching property in the backend's pom.xml to pick it up.
 import { execSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -18,18 +18,13 @@ function findMavenCommand() {
     execSync('mvn --version', { stdio: 'ignore' });
     return 'mvn';
   } catch {
-    // No global Maven install — fall back to the wrapper checked into the
-    // sibling intent-backend-service repo (same monorepo layout this whole
-    // contract-first flow already assumes).
-    const wrapperName = process.platform === 'win32' ? 'mvnw.cmd' : 'mvnw';
-    const wrapperPath = join(packageDir, '..', '..', '..', 'intent-backend-service', wrapperName);
-    if (!existsSync(wrapperPath)) {
-      throw new Error(
-        'No `mvn` on PATH and no intent-backend-service/mvnw wrapper found. ' +
-          'Install Maven, or check out intent-backend-service as a sibling repo.'
-      );
-    }
-    return wrapperPath;
+    // Neither this repo nor intent-backend-service ships a Maven wrapper —
+    // both pin `maven` in their own .mise.toml instead, so `mvn` is expected
+    // to already be on PATH via mise.
+    throw new Error(
+      'No `mvn` on PATH. Run `mise install` in this repo (.mise.toml pins Java + Maven), ' +
+        'or install Maven yourself.'
+    );
   }
 }
 
