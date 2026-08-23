@@ -26,3 +26,13 @@ properties:
     format: date
     description: Corrected date when the transaction occurred (YYYY-MM-DD).
     example: '2026-06-27'
+  receiptKey:
+    type: string
+    maxLength: 255
+    description: >
+      Receipt image for this transaction, treated as a full replacement.
+      Echo back the `receiptKey` from the current transaction to keep the
+      existing receipt, supply a newly uploaded `pending/...` key to replace
+      it, or omit the field entirely to remove the receipt. A replaced or
+      removed image is deleted from storage once the update commits.
+    example: receipts/7c9e6679-7425-40de-944b-e07fc1f90ae7/a3f1c2d4-91b7-4e5a-bc34-8f72e1d09abc/3f1c2d49.jpg

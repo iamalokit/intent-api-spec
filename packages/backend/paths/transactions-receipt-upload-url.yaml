@@ -1,0 +1,50 @@
+post:
+  tags:
+    - Transactions
+  summary: Request an upload URL for a transaction receipt
+  description: >
+    Mints a short-lived presigned URL the client uses to upload a receipt image
+    directly to object storage, so image bytes never pass through this service.
+
+
+    The returned `objectKey` is generated server-side under a prefix derived
+    from the authenticated user; clients cannot choose it. The upload lands in
+    a pending area and is promoted to permanent storage only when the returned
+    key is supplied as `receiptKey` on a create or update transaction call.
+    Anything left pending is expired automatically after 24 hours, so
+    abandoning the form leaks nothing.
+  operationId: createReceiptUploadUrl
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components/schemas/attachments/ReceiptUploadUrlRequest.yaml'
+        example:
+          contentType: image/jpeg
+          contentLength: 248312
+  responses:
+    '200':
+      description: Presigned upload URL created successfully
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/attachments/ReceiptUploadUrlResponse.yaml'
+          example:
+            uploadUrl: https://silver-receipts-dev.s3.ap-south-1.amazonaws.com/pending/7c9e6679-7425-40de-944b-e07fc1f90ae7/3f1c2d49-1b74-e5ab-c348-f72e1d09abcd.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256
+            objectKey: pending/7c9e6679-7425-40de-944b-e07fc1f90ae7/3f1c2d49-1b74-e5ab-c348-f72e1d09abcd.jpg
+            expiresAt: '2026-08-22T07:45:00Z'
+    '400':
+      description: Validation error — unsupported content type or size out of range
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/common/ErrorResponse.yaml'
+          example:
+            status: 400
+            error: Bad Request
+            message: contentLength must be less than or equal to 10485760
+    '401':
+      $ref: '../components/responses/UnauthorizedResponse.yaml'
+    '500':
+      $ref: '../components/responses/InternalServerErrorResponse.yaml'

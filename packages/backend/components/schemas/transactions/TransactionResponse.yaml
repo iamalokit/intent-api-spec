@@ -50,3 +50,22 @@ properties:
       - $ref: './RecurringTransactionRuleResponse.yaml'
     nullable: true
     description: Recurring schedule this transaction originated, if any
+  receiptKey:
+    type: string
+    maxLength: 255
+    nullable: true
+    description: >
+      Stable storage key of the attached receipt image, or null when the
+      transaction has no receipt. Echo this value back on update to keep the
+      existing receipt.
+    example: receipts/7c9e6679-7425-40de-944b-e07fc1f90ae7/a3f1c2d4-91b7-4e5a-bc34-8f72e1d09abc/3f1c2d49.jpg
+  receiptUrl:
+    type: string
+    format: uri
+    nullable: true
+    description: >
+      Short-lived presigned URL for viewing the receipt image, or null when
+      the transaction has no receipt. Expires roughly 15 minutes after the
+      response is issued and differs on every request, so it must not be
+      persisted or used as a cache key.
+    example: https://silver-receipts-dev.s3.ap-south-1.amazonaws.com/receipts/7c9e6679-7425-40de-944b-e07fc1f90ae7/a3f1c2d4-91b7-4e5a-bc34-8f72e1d09abc/3f1c2d49.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256

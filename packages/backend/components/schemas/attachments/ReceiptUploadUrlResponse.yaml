@@ -1,0 +1,24 @@
+type: object
+properties:
+  uploadUrl:
+    type: string
+    format: uri
+    description: >
+      Short-lived presigned URL. The client uploads the image by issuing a
+      plain `PUT` to this URL with the declared `Content-Type` and no
+      Authorization header — the credentials are already embedded in the
+      query string.
+    example: https://silver-receipts-dev.s3.ap-south-1.amazonaws.com/pending/7c9e6679-7425-40de-944b-e07fc1f90ae7/3f1c2d49-1b74-e5ab-c348-f72e1d09abcd.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256
+  objectKey:
+    type: string
+    maxLength: 255
+    description: >
+      Server-generated storage key the upload targets. Send this value back as
+      `receiptKey` when creating or updating the transaction. Clients never
+      choose this key — it is derived from the authenticated user.
+    example: pending/7c9e6679-7425-40de-944b-e07fc1f90ae7/3f1c2d49-1b74-e5ab-c348-f72e1d09abcd.jpg
+  expiresAt:
+    type: string
+    format: date-time
+    description: Timestamp after which the presigned URL is no longer valid.
+    example: '2026-08-22T07:45:00Z'

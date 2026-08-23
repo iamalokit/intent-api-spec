@@ -48,3 +48,12 @@ properties:
     example: '2026-06-27'
   recurringRule:
     $ref: './RecurringTransactionRuleRequest.yaml'
+  receiptKey:
+    type: string
+    maxLength: 255
+    description: >
+      Storage key of a receipt image previously uploaded via
+      `POST /api/v1/transactions/receipt-upload-url`. Must be a pending key
+      belonging to the authenticated user; it is promoted to permanent storage
+      as part of creating the transaction. Omit when there is no receipt.
+    example: pending/7c9e6679-7425-40de-944b-e07fc1f90ae7/3f1c2d49-1b74-e5ab-c348-f72e1d09abcd.jpg
