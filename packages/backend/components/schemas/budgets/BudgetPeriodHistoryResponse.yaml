@@ -11,6 +11,7 @@ required:
   - carryoverOut
   - lateSpentAmount
   - closedAt
+  - currency
 properties:
   id:
     type: string
@@ -66,3 +67,8 @@ properties:
     format: date-time
     description: Timestamp when this period was closed and the snapshot was recorded
     example: '2026-06-01T00:00:00Z'
+  currency:
+    type: string
+    default: INR
+    description: ISO 4217 currency code
+    example: INR

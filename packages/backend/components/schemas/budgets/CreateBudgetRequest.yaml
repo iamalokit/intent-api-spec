@@ -5,6 +5,7 @@ required:
   - periodType
   - amount
   - startDate
+  - currency
 properties:
   name:
     type: string
@@ -24,6 +25,11 @@ properties:
     format: date
     description: Date from which the first budget period begins (YYYY-MM-DD)
     example: '2026-06-01'
+  currency:
+    type: string
+    default: INR
+    description: ISO 4217 currency code
+    example: INR
   carryoverPolicy:
     $ref: './BudgetCarryoverPolicy.yaml'
   iconId:

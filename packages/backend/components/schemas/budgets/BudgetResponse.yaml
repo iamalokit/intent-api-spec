@@ -15,6 +15,7 @@ required:
   - carryoverSpent
   - updatedAt
   - iconId
+  - currency
 properties:
   id:
     type: string
@@ -37,6 +38,11 @@ properties:
     format: date
     description: Date from which the first budget period begins
     example: '2026-06-01'
+  currency:
+    type: string
+    default: INR
+    description: ISO 4217 currency code
+    example: INR
   status:
     $ref: './BudgetStatus.yaml'
   carryoverPolicy:

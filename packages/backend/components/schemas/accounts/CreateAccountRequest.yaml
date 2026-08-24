@@ -18,7 +18,4 @@ properties:
     description: Known balance at time of creation. Omit if unknown. Represented as a string to avoid floating-point precision loss; always exactly 2 decimal places.
     example: '25000.00'
   balanceSource:
-    type: string
-    enum: [MANUAL, BANK_SYNC]
-    description: How the balance was obtained. Required when currentBalance is provided.
-    example: MANUAL
+    $ref: './BalanceSource.yaml'

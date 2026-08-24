@@ -15,7 +15,4 @@ properties:
     description: Updated balance of the account. Represented as a string to avoid floating-point precision loss; always exactly 2 decimal places.
     example: '30000.00'
   balanceSource:
-    type: string
-    enum: [MANUAL, BANK_SYNC]
-    description: How the balance was obtained
-    example: MANUAL
+    $ref: './BalanceSource.yaml'

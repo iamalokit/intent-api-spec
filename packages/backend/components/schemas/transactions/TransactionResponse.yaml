@@ -28,6 +28,7 @@ properties:
   budgetId:
     type: string
     format: uuid
+    nullable: true
     description: ID of the budget this transaction is categorised under, if any
     example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
   type:
@@ -48,6 +49,7 @@ properties:
     example: Grocery run
   description:
     type: string
+    nullable: true
     description: Optional note or label for the transaction
     example: Monthly grocery shopping
   createdAt:

@@ -27,10 +27,11 @@ properties:
     description: Current balance of the account. Represented as a string to avoid floating-point precision loss; always exactly 2 decimal places.
     example: '25000.00'
   balanceSource:
+    allOf:
+      - $ref: './BalanceSource.yaml'
     type: string
     nullable: true
     description: How the balance was obtained
-    example: MANUAL
   lastSyncedAt:
     type: string
     format: date-time
