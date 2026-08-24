@@ -1,0 +1,25 @@
+name: Idempotency-Key
+in: header
+required: false
+description: >
+  Client-generated idempotency key used to safely retry a request without
+  risking duplicate execution. A client-generated UUIDv4 is recommended.
+
+
+  Replaying a request with a previously-used key and an identical request
+  body returns the original response unchanged (same status code and body)
+  without re-executing the operation, as long as the key is still within a
+  limited retention window.
+
+
+  Replaying a request with a previously-used key but a different request
+  body is rejected with `409 Conflict` (`code: IDEMPOTENCY_KEY_REUSE`).
+
+
+  Omitting this header disables deduplication entirely; every request is
+  executed normally.
+schema:
+  type: string
+  format: uuid
+  maxLength: 255
+example: d290f1ee-6c54-4b01-90e6-d701748f0851

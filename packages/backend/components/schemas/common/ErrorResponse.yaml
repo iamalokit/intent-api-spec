@@ -9,3 +9,19 @@ properties:
   message:
     type: string
     example: phoneNumber must be a valid E.164 formatted number
+  code:
+    type: string
+    pattern: '^[A-Z][A-Z0-9_]{2,64}$'
+    description: Machine-readable, stable error code for programmatic handling by API consumers.
+    example: VALIDATION_FAILED
+  traceId:
+    type: string
+    format: uuid
+    description: Correlates this error with server-side logs; include when contacting support.
+    example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+required:
+  - status
+  - error
+  - message
+  - code
+  - traceId

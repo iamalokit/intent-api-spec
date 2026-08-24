@@ -1,0 +1,17 @@
+type: object
+properties:
+  field:
+    type: string
+    description: >
+      Dotted/bracketed path to the property that failed validation, e.g.
+      `accountName` or `orderings[1].order`. The literal string `(body)`
+      denotes a whole-request or cross-field violation that doesn't map to
+      a single property.
+    example: accountName
+  message:
+    type: string
+    description: Human-readable, field-scoped explanation of the validation failure.
+    example: must not be blank
+required:
+  - field
+  - message

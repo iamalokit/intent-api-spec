@@ -87,6 +87,10 @@ components:
     # Common — reusable across services
     ErrorResponse:
       $ref: './components/schemas/common/ErrorResponse.yaml'
+    ValidationErrorItem:
+      $ref: './components/schemas/common/ValidationErrorItem.yaml'
+    ValidationErrorResponse:
+      $ref: './components/schemas/common/ValidationErrorResponse.yaml'
     PageInfo:
       $ref: './components/schemas/common/PageInfo.yaml'
     PagedResponse:
@@ -114,6 +118,8 @@ components:
     # Accounts
     AccountType:
       $ref: './components/schemas/accounts/AccountType.yaml'
+    BalanceSource:
+      $ref: './components/schemas/accounts/BalanceSource.yaml'
     CreateAccountRequest:
       $ref: './components/schemas/accounts/CreateAccountRequest.yaml'
     AccountResponse:
@@ -211,6 +217,11 @@ components:
       $ref: './components/responses/UnauthorizedResponse.yaml'
     InternalServerErrorResponse:
       $ref: './components/responses/InternalServerErrorResponse.yaml'
+    RateLimitExceededResponse:
+      $ref: './components/responses/RateLimitExceededResponse.yaml'
+  parameters:
+    IdempotencyKeyHeader:
+      $ref: './components/parameters/IdempotencyKeyHeader.yaml'
   securitySchemes:
     bearerAuth:
       type: http
