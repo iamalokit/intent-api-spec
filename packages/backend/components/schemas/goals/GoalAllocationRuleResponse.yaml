@@ -33,11 +33,11 @@ properties:
     description: Type of allocation calculation
     example: FIXED_AMOUNT
   fixedAmount:
-    type: number
-    format: double
+    type: string
+    pattern: '^\d{1,15}\.\d{2}$'
     nullable: true
-    description: Fixed amount to allocate
-    example: 5000.00
+    description: Fixed amount to allocate. Represented as a string to avoid floating-point precision loss; always exactly 2 decimal places.
+    example: '5000.00'
   enabled:
     type: boolean
     description: Whether this allocation rule is active

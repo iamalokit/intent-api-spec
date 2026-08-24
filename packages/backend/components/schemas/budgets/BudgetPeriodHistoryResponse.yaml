@@ -33,32 +33,34 @@ properties:
     description: First day of the following period (exclusive upper bound)
     example: '2026-06-01'
   budgetedAmount:
-    type: number
-    format: double
-    description: Budget limit (amount + carryoverIn) that applied during this period
-    example: 12000.00
+    type: string
+    pattern: '^\d{1,15}\.\d{2}$'
+    description: Budget limit (amount + carryoverIn) that applied during this period. Represented as a string to avoid floating-point precision loss; always exactly 2 decimal places.
+    example: '12000.00'
   carryoverIn:
-    type: number
-    format: double
-    description: Balance carried into this period from the previous one
-    example: 2000.00
+    type: string
+    pattern: '^\d{1,15}\.\d{2}$'
+    description: Balance carried into this period from the previous one. Represented as a string to avoid floating-point precision loss; always exactly 2 decimal places.
+    example: '2000.00'
   spentDuringPeriod:
-    type: number
-    format: double
-    description: Total DEBIT amount recorded against the budget as of when this period closed
-    example: 9500.00
+    type: string
+    pattern: '^\d{1,15}\.\d{2}$'
+    description: Total DEBIT amount recorded against the budget as of when this period closed. Represented as a string to avoid floating-point precision loss; always exactly 2 decimal places.
+    example: '9500.00'
   carryoverOut:
-    type: number
-    format: double
-    description: Balance carried forward into the next period
-    example: 2500.00
+    type: string
+    pattern: '^\d{1,15}\.\d{2}$'
+    description: Balance carried forward into the next period. Represented as a string to avoid floating-point precision loss; always exactly 2 decimal places.
+    example: '2500.00'
   lateSpentAmount:
-    type: number
-    format: double
+    type: string
+    pattern: '^\d{1,15}\.\d{2}$'
     description: >
       DEBIT amount effective-dated within this period but entered into the
-      system only after the period had already closed (backdated/late-posted spend)
-    example: 350.00
+      system only after the period had already closed (backdated/late-posted spend).
+      Represented as a string to avoid floating-point precision loss; always
+      exactly 2 decimal places.
+    example: '350.00'
   closedAt:
     type: string
     format: date-time

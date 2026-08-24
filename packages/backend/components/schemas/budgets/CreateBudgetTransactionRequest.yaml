@@ -14,11 +14,10 @@ properties:
   type:
     $ref: '../transactions/TransactionType.yaml'
   amount:
-    type: number
-    format: double
-    minimum: 0.01
-    description: Transaction amount
-    example: 1500.00
+    type: string
+    pattern: '^\d{1,15}\.\d{2}$'
+    description: Transaction amount. Must be at least 0.01. Represented as a string to avoid floating-point precision loss; always exactly 2 decimal places.
+    example: '1500.00'
   currency:
     type: string
     minLength: 3

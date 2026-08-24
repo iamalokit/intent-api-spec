@@ -33,10 +33,10 @@ properties:
   type:
     $ref: './TransactionType.yaml'
   amount:
-    type: number
-    format: double
-    description: Transaction amount
-    example: 1500.00
+    type: string
+    pattern: '^\d{1,15}\.\d{2}$'
+    description: Transaction amount. Represented as a string to avoid floating-point precision loss; always exactly 2 decimal places.
+    example: '1500.00'
   currency:
     type: string
     description: ISO 4217 currency code

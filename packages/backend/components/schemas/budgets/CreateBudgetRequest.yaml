@@ -15,11 +15,10 @@ properties:
   periodType:
     $ref: './BudgetPeriodType.yaml'
   amount:
-    type: number
-    format: double
-    minimum: 1
-    description: Maximum spend allowed for the period
-    example: 10000.00
+    type: string
+    pattern: '^\d{1,15}\.\d{2}$'
+    description: Maximum spend allowed for the period. Must be at least 1.00. Represented as a string to avoid floating-point precision loss; always exactly 2 decimal places.
+    example: '10000.00'
   startDate:
     type: string
     format: date

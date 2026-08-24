@@ -12,10 +12,10 @@ properties:
     description: Unique identifier of the transaction
     example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
   amount:
-    type: number
-    format: double
-    description: Absolute value of the transaction amount
-    example: 5000.00
+    type: string
+    pattern: '^\d{1,15}\.\d{2}$'
+    description: Absolute value of the transaction amount. Represented as a string to avoid floating-point precision loss; always exactly 2 decimal places.
+    example: '5000.00'
   transactionType:
     $ref: './GoalTransactionType.yaml'
   createdAt:
