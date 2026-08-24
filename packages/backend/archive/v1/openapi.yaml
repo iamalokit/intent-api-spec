@@ -1,0 +1,3418 @@
+openapi: 3.0.3
+info:
+  title: Silver Backend Service
+  version: 0.0.1
+  description: |
+    API documentation for the Silver Backend Service
+
+    **ARCHIVED:** This is a read-only historical snapshot of the v1 API. It will not receive further updates. Please refer to the current API documentation for the latest specification and endpoints.
+  license:
+    name: Proprietary - All Rights Reserved
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+security:
+  - bearerAuth: []
+tags:
+  - name: Auth
+    description: Authentication and OTP flows
+  - name: Users
+    description: User account management
+  - name: Accounts
+    description: User financial accounts management
+  - name: Goals
+    description: Saving goals management
+  - name: Budgets
+    description: Spending budgets management
+  - name: Icons
+    description: Curated icon catalog for budgets and saving goals
+  - name: Transactions
+    description: User credit and debit transaction recording
+  - name: Scheduler
+    description: On-demand goal allocation schedule execution
+  - name: Notifications
+    description: Push notification device token registration
+paths:
+  /api/v1/users:
+    post:
+      tags:
+        - Users
+      summary: Create a user account
+      description: |
+        Provisions a user account for the authenticated phone number. The phone number is extracted from the JWT token issued after OTP verification. Returns 409 if an account already exists for that number.
+      operationId: createUser
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+            example:
+              timezone: Asia/Kolkata
+      responses:
+        '201':
+          description: User account created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+              example:
+                id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                phoneNumber: '+919876543210'
+                active: true
+                createdAt: '2026-06-04T10:30:00Z'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '409':
+          description: Conflict — account already exists for this phone number
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 409
+                error: Conflict
+                message: An account already exists for this phone number
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /api/v1/users/me:
+    get:
+      tags:
+        - Users
+      summary: Get current user profile
+      description: |
+        Returns the profile of the authenticated user. The user is identified by the JWT bearer token.
+      operationId: getCurrentUser
+      responses:
+        '200':
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+              example:
+                id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                phoneNumber: '+919876543210'
+                active: true
+                firstName: Alokit
+                lastName: Jindal
+                email: user@example.com
+                timezone: Asia/Kolkata
+                pushNotificationsEnabled: true
+                createdAt: '2026-06-04T10:30:00Z'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '404':
+          description: User account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                error: Not Found
+                message: User not found
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+    put:
+      tags:
+        - Users
+      summary: Update current user profile
+      description: |
+        Partially updates the profile of the authenticated user. Only fields included in the request body are updated; omitted fields retain their current values. The user is identified by the JWT bearer token. `phoneNumber`, `active`, and `createdAt` are immutable and cannot be changed through this endpoint.
+      operationId: updateCurrentUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+            example:
+              firstName: Alokit
+              lastName: Jindal
+              email: user@example.com
+              timezone: Asia/Kolkata
+              pushNotificationsEnabled: true
+      responses:
+        '200':
+          description: User profile updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+              example:
+                id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+                phoneNumber: '+919876543210'
+                active: true
+                firstName: Alokit
+                lastName: Jindal
+                email: user@example.com
+                timezone: Asia/Kolkata
+                pushNotificationsEnabled: true
+                createdAt: '2026-06-04T10:30:00Z'
+        '400':
+          description: Validation error — invalid field values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                error: Bad Request
+                message: email must be a valid email address
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '404':
+          description: User account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                error: Not Found
+                message: User not found
+        '409':
+          description: Conflict — email address is already in use by another account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 409
+                error: Conflict
+                message: Email address is already in use
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /api/v1/accounts:
+    get:
+      tags:
+        - Accounts
+      summary: List user accounts
+      description: |
+        Returns all financial accounts for the authenticated user, ordered by creation date descending.
+      operationId: listAccounts
+      parameters:
+        - name: token
+          in: query
+          required: false
+          description: |
+            Opaque pagination cursor returned in `paging.nextToken` or `paging.previousToken` from a previous response. Omit to fetch the first page.
+          schema:
+            type: string
+        - name: size
+          in: query
+          required: false
+          description: Number of accounts per page. Capped at 100.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Accounts retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountListResponse'
+              example:
+                data:
+                  - id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                    accountName: HDFC Savings
+                    accountType: SAVINGS
+                    currentBalance: 25000
+                    balanceSource: MANUAL
+                    lastSyncedAt: null
+                    createdAt: '2026-06-07T10:30:00Z'
+                paging:
+                  currentToken: eyJjcmVhdGVkQXQiOiIyMDI2LTA2LTA3VDEwOjMwOjAwWiIsImlkIjoiN2M5ZTY2NzkifQ==
+                  nextToken: null
+                  previousToken: null
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+    post:
+      tags:
+        - Accounts
+      summary: Create a user account
+      description: |
+        Links a financial account to the authenticated user. The account starts with the provided balance (or no balance if omitted) and the given account type.
+      operationId: createAccount
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAccountRequest'
+            example:
+              accountName: HDFC Savings
+              accountType: SAVINGS
+              currentBalance: 25000
+              balanceSource: MANUAL
+      responses:
+        '201':
+          description: Account created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+              example:
+                id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                accountName: HDFC Savings
+                accountType: SAVINGS
+                currentBalance: 25000
+                balanceSource: MANUAL
+                lastSyncedAt: null
+                createdAt: '2026-06-07T10:30:00Z'
+        '400':
+          description: Validation error — missing or invalid fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                error: Bad Request
+                message: accountName must not be blank
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /api/v1/accounts/{accountId}:
+    get:
+      tags:
+        - Accounts
+      summary: Get an account by ID
+      description: |
+        Returns a single financial account by its ID. Returns 404 if the account does not exist or does not belong to the authenticated user.
+      operationId: getAccountById
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          description: Unique identifier of the financial account
+          schema:
+            type: string
+            format: uuid
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+      responses:
+        '200':
+          description: Account retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+              example:
+                id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                accountName: HDFC Savings
+                accountType: SAVINGS
+                currentBalance: 25000
+                balanceSource: MANUAL
+                lastSyncedAt: null
+                createdAt: '2026-06-07T10:30:00Z'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '404':
+          description: Account not found or does not belong to the authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                error: Not Found
+                message: Account not found
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+    put:
+      tags:
+        - Accounts
+      summary: Update an account by ID
+      description: |
+        Partially updates a financial account. Only fields included in the request body are updated. Returns 404 if the account does not exist or does not belong to the authenticated user.
+      operationId: updateAccount
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          description: Unique identifier of the financial account
+          schema:
+            type: string
+            format: uuid
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAccountRequest'
+            example:
+              accountName: HDFC Savings
+              currentBalance: 30000
+              balanceSource: MANUAL
+      responses:
+        '200':
+          description: Account updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+              example:
+                id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                accountName: HDFC Savings
+                accountType: SAVINGS
+                currentBalance: 30000
+                balanceSource: MANUAL
+                lastSyncedAt: null
+                createdAt: '2026-06-07T10:30:00Z'
+        '400':
+          description: Validation error — invalid field values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                error: Bad Request
+                message: currentBalance must be greater than or equal to 0
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '404':
+          description: Account not found or does not belong to the authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                error: Not Found
+                message: Account not found
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /api/v1/goals:
+    get:
+      tags:
+        - Goals
+      summary: List saving goals
+      description: |
+        Returns all saving goals for the authenticated user, ordered by creation date descending. Optionally filter by status.
+      operationId: listGoals
+      parameters:
+        - name: filter
+          in: query
+          required: false
+          description: |
+            Filter expression supporting comparison and logical operators.
+
+            **Grammar**
+            ```
+            expr       = term ( ("and" | "or") term )*
+            term       = field operator value | "(" expr ")"
+            operator   = "eq" | "neq"
+            field      = "status" | "currency"
+            value      = bare word (no quotes)
+            ```
+            Operator precedence follows standard rules — `and` binds tighter than `or`. Use parentheses to override.
+
+            **Supported fields**
+            | Field      | Type   | Allowed values                        |
+            |------------|--------|---------------------------------------|
+            | `status`   | enum   | `ACTIVE`, `COMPLETED`, `CANCELLED`    |
+            | `currency` | string | ISO 4217 code, e.g. `INR`, `USD`     |
+
+            **Examples**
+            - `status eq ACTIVE`
+            - `status neq CANCELLED`
+            - `status eq ACTIVE and currency eq INR`
+            - `status eq ACTIVE or status eq COMPLETED`
+            - `(status eq ACTIVE or status eq COMPLETED) and currency eq INR`
+          schema:
+            type: string
+          example: status eq ACTIVE and currency eq INR
+        - name: token
+          in: query
+          required: false
+          description: |
+            Opaque pagination cursor returned in `paging.nextToken` or `paging.previousToken` from a previous response. Omit to fetch the first page.
+          schema:
+            type: string
+        - name: size
+          in: query
+          required: false
+          description: Number of goals per page. Capped at 100.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Goals retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoalListResponse'
+              example:
+                data:
+                  - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    name: Emergency Fund
+                    targetAmount: 50000
+                    currentAmount: 12000
+                    currency: INR
+                    targetDate: '2026-12-31'
+                    notes: 6 months of living expenses
+                    status: ACTIVE
+                    createdAt: '2026-06-04T10:30:00Z'
+                paging:
+                  currentToken: eyJjcmVhdGVkQXQiOiIyMDI2LTA2LTA0VDEwOjMwOjAwWiIsImlkIjoiM2ZhODVmNjQifQ==
+                  nextToken: eyJjcmVhdGVkQXQiOiIyMDI2LTA1LTAxVDA4OjAwOjAwWiIsImlkIjoiOWFiMTJjMzQifQ==
+                  previousToken: null
+        '400':
+          description: Invalid filter expression
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                error: Bad Request
+                message: 'Invalid filter expression: unexpected token ''ACTIVE'' at position 10'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+    post:
+      tags:
+        - Goals
+      summary: Create a new saving goal
+      description: |
+        Creates a saving goal for the authenticated user. The goal starts with a current amount of zero and a status of ACTIVE.
+      operationId: createGoal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGoalRequest'
+            example:
+              name: Emergency Fund
+              targetAmount: 50000
+              currency: INR
+              targetDate: '2026-12-31'
+              notes: 6 months of living expenses
+      responses:
+        '201':
+          description: Goal created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoalResponse'
+              example:
+                id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                name: Emergency Fund
+                targetAmount: 50000
+                currentAmount: 0
+                currency: INR
+                targetDate: '2026-12-31'
+                notes: 6 months of living expenses
+                status: ACTIVE
+                createdAt: '2026-06-04T10:30:00Z'
+        '400':
+          description: Validation error — missing or invalid fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                error: Bad Request
+                message: targetAmount must be greater than or equal to 1
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /api/v1/goals/{goalId}:
+    get:
+      tags:
+        - Goals
+      summary: Get a saving goal by ID
+      description: |
+        Returns a single saving goal by its ID. Returns 404 if the goal does not exist or does not belong to the authenticated user.
+      operationId: getGoalById
+      parameters:
+        - name: goalId
+          in: path
+          required: true
+          description: Unique identifier of the saving goal
+          schema:
+            type: string
+            format: uuid
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+      responses:
+        '200':
+          description: Goal retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoalResponse'
+              example:
+                id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                name: Emergency Fund
+                targetAmount: 50000
+                currentAmount: 12000
+                currency: INR
+                targetDate: '2026-12-31'
+                notes: 6 months of living expenses
+                status: ACTIVE
+                createdAt: '2026-06-04T10:30:00Z'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '404':
+          description: Goal not found or does not belong to the authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                error: Not Found
+                message: Goal not found
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+    delete:
+      tags:
+        - Goals
+      summary: Delete a saving goal
+      description: |
+        Permanently deletes a saving goal. Returns 404 if the goal does not exist or does not belong to the authenticated user.
+      operationId: deleteGoal
+      parameters:
+        - name: goalId
+          in: path
+          required: true
+          description: Unique identifier of the saving goal
+          schema:
+            type: string
+            format: uuid
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+      responses:
+        '204':
+          description: Goal deleted successfully
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '404':
+          description: Goal not found or does not belong to the authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                error: Not Found
+                message: Goal not found
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+    put:
+      tags:
+        - Goals
+      summary: Update a saving goal
+      description: |
+        Partially updates a saving goal. Only fields included in the request body are updated. Returns 404 if the goal does not exist or does not belong to the authenticated user.
+      operationId: updateGoal
+      parameters:
+        - name: goalId
+          in: path
+          required: true
+          description: Unique identifier of the saving goal
+          schema:
+            type: string
+            format: uuid
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateGoalRequest'
+      responses:
+        '200':
+          description: Goal updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoalResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '404':
+          description: Goal not found or does not belong to the authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                error: Not Found
+                message: Goal not found
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /api/v1/goals/order:
+    put:
+      tags:
+        - Goals
+      summary: Reorder saving goals
+      description: |
+        Replaces the display order of all saving goals for the authenticated user in a single atomic operation. The request must include every goal owned by the user — partial lists are rejected with 400.
+
+        **Constraints**
+        - `orderings` must contain exactly one entry per goal owned by the user.
+        - `order` values within the list must be unique non-negative integers.
+        - Goals belonging to other users are ignored if accidentally included and
+          will not cause an error; only the caller's goals are updated.
+      operationId: reorderGoals
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateGoalOrderRequest'
+            example:
+              orderings:
+                - goalId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  order: 0
+                - goalId: 7bc91a23-1234-4abc-9def-4d8e7f123456
+                  order: 1
+                - goalId: a1b2c3d4-5678-4ef0-abcd-ef1234567890
+                  order: 2
+      responses:
+        '204':
+          description: Goals reordered successfully
+        '400':
+          description: |
+            Validation error — missing goals, duplicate order values, or malformed request body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                missingGoals:
+                  summary: Orderings list does not cover all user goals
+                  value:
+                    status: 400
+                    error: Bad Request
+                    message: Orderings must include all 3 goals; got 2
+                duplicateOrder:
+                  summary: Duplicate order values in the list
+                  value:
+                    status: 400
+                    error: Bad Request
+                    message: 'Duplicate order value: 1'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /api/v1/goals/{goalId}/transactions:
+    get:
+      tags:
+        - Goals
+      summary: List transactions for a saving goal
+      description: |
+        Returns a paginated list of allocation transactions recorded against a saving goal, ordered by creation date descending. Returns 404 if the goal does not exist or does not belong to the authenticated user.
+      operationId: listGoalTransactions
+      parameters:
+        - name: goalId
+          in: path
+          required: true
+          description: Unique identifier of the saving goal
+          schema:
+            type: string
+            format: uuid
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        - name: token
+          in: query
+          required: false
+          description: |
+            Opaque pagination cursor returned in `paging.nextToken` or `paging.previousToken` from a previous response. Omit to fetch the first page.
+          schema:
+            type: string
+        - name: size
+          in: query
+          required: false
+          description: Number of transactions per page. Capped at 100.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Transactions retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoalTransactionListResponse'
+              example:
+                data:
+                  - id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                    amount: 5000
+                    transactionType: DEPOSIT
+                    createdAt: '2026-06-13T09:15:00Z'
+                  - id: 1a2b3c4d-5e6f-7890-abcd-ef1234567890
+                    amount: 1000
+                    transactionType: WITHDRAWAL
+                    createdAt: '2026-06-10T14:30:00Z'
+                paging:
+                  currentToken: eyJjcmVhdGVkQXQiOiIyMDI2LTA2LTEzVDA5OjE1OjAwWiIsImlkIjoiN2M5ZTY2NzkifQ==
+                  nextToken: null
+                  previousToken: null
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '404':
+          description: Goal not found or does not belong to the authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                error: Not Found
+                message: Goal not found
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /api/v1/budgets:
+    get:
+      tags:
+        - Budgets
+      summary: List budgets
+      description: |
+        Returns all budgets for the authenticated user, ordered by creation date descending. Optionally filter using a structured filter expression.
+      operationId: listBudgets
+      parameters:
+        - name: filter
+          in: query
+          required: false
+          description: |
+            Filter expression supporting comparison and logical operators.
+
+            **Grammar**
+            ```
+            expr       = term ( ("and" | "or") term )*
+            term       = field operator value | "(" expr ")"
+            operator   = "eq" | "neq"
+            field      = "status" | "periodType"
+            value      = bare word (no quotes)
+            ```
+            Operator precedence follows standard rules — `and` binds tighter than `or`. Use parentheses to override.
+
+            **Supported fields**
+            | Field        | Type    | Allowed values                    |
+            |--------------|---------|------------------------------------|
+            | `status`     | enum    | `ACTIVE`, `INACTIVE`, `ARCHIVED`  |
+            | `periodType` | enum    | `WEEKLY`, `MONTHLY`, `YEARLY`     |
+
+            **Examples**
+            - `status eq ACTIVE`
+            - `periodType eq MONTHLY`
+            - `status eq ACTIVE and periodType eq MONTHLY`
+            - `periodType eq WEEKLY or periodType eq MONTHLY`
+          schema:
+            type: string
+          example: status eq ACTIVE and periodType eq MONTHLY
+        - name: token
+          in: query
+          required: false
+          description: |
+            Opaque pagination cursor returned in `paging.nextToken` or `paging.previousToken` from a previous response. Omit to fetch the first page.
+          schema:
+            type: string
+        - name: size
+          in: query
+          required: false
+          description: Number of budgets per page. Capped at 100.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Budgets retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BudgetListResponse'
+              example:
+                data:
+                  - id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                    name: Groceries
+                    periodType: MONTHLY
+                    amount: 10000
+                    startDate: '2026-06-01'
+                    status: ACTIVE
+                    createdAt: '2026-06-14T09:00:00Z'
+                    updatedAt: '2026-06-14T09:00:00Z'
+                paging:
+                  currentToken: eyJjcmVhdGVkQXQiOiIyMDI2LTA2LTE0VDA5OjAwOjAwWiIsImlkIjoiN2M5ZTY2NzkifQ==
+                  nextToken: null
+                  previousToken: null
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+    post:
+      tags:
+        - Budgets
+      summary: Create a new budget
+      description: |
+        Creates a spending budget for the authenticated user. The budget starts active and applies from `startDate` for each recurring `periodType` period.
+      operationId: createBudget
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBudgetRequest'
+            example:
+              name: Groceries
+              periodType: MONTHLY
+              amount: 10000
+              startDate: '2026-06-01'
+      responses:
+        '201':
+          description: Budget created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BudgetResponse'
+              example:
+                id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                name: Groceries
+                periodType: MONTHLY
+                amount: 10000
+                startDate: '2026-06-01'
+                status: ACTIVE
+                createdAt: '2026-06-14T09:00:00Z'
+                updatedAt: '2026-06-14T09:00:00Z'
+        '400':
+          description: Validation error — missing or invalid fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                error: Bad Request
+                message: amount must be greater than or equal to 1
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /api/v1/budgets/{budgetId}:
+    get:
+      tags:
+        - Budgets
+      summary: Get a budget by ID
+      description: |
+        Returns a single budget by its ID. Returns 404 if the budget does not exist or does not belong to the authenticated user.
+      operationId: getBudgetById
+      parameters:
+        - name: budgetId
+          in: path
+          required: true
+          description: Unique identifier of the budget
+          schema:
+            type: string
+            format: uuid
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+      responses:
+        '200':
+          description: Budget retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BudgetResponse'
+              example:
+                id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                name: Groceries
+                periodType: MONTHLY
+                amount: 10000
+                startDate: '2026-06-01'
+                status: ACTIVE
+                createdAt: '2026-06-14T09:00:00Z'
+                updatedAt: '2026-06-14T09:00:00Z'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '404':
+          description: Budget not found or does not belong to the authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                error: Not Found
+                message: Budget not found
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+    put:
+      tags:
+        - Budgets
+      summary: Update a budget
+      description: |
+        Updates an existing budget. Only fields included in the request body are updated; omitted fields retain their current values. Returns 404 if the budget does not exist or does not belong to the authenticated user. An archived budget is read-only: any request that changes a field other than `status` while the budget's current status is `ARCHIVED` (and the request does not itself move `status` away from `ARCHIVED`) returns 409.
+      operationId: updateBudget
+      parameters:
+        - name: budgetId
+          in: path
+          required: true
+          description: Unique identifier of the budget
+          schema:
+            type: string
+            format: uuid
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBudgetRequest'
+            example:
+              name: Groceries & Dining
+              amount: 12000
+              status: ACTIVE
+      responses:
+        '200':
+          description: Budget updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BudgetResponse'
+              example:
+                id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                name: Groceries & Dining
+                periodType: MONTHLY
+                amount: 12000
+                startDate: '2026-06-01'
+                status: ACTIVE
+                createdAt: '2026-06-14T09:00:00Z'
+                updatedAt: '2026-06-15T11:30:00Z'
+        '400':
+          description: Validation error — invalid field values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                error: Bad Request
+                message: amount must be greater than or equal to 1
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '404':
+          description: Budget not found or does not belong to the authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                error: Not Found
+                message: Budget not found
+        '409':
+          description: Conflict — the budget is archived and read-only
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 409
+                error: Conflict
+                message: Archived budgets are read-only; unarchive it first
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /api/v1/budgets/{budgetId}/transactions:
+    post:
+      tags:
+        - Budgets
+      summary: Add a transaction to a budget category
+      description: |
+        Records a new transaction categorised under the specified budget. The budget ID is taken from the path — do not include it in the request body. Currency defaults to `INR` if not provided. Returns 404 if the budget does not exist or does not belong to the authenticated user. Returns 409 if the budget is archived.
+      operationId: createBudgetTransaction
+      parameters:
+        - name: budgetId
+          in: path
+          required: true
+          description: Unique identifier of the budget category
+          schema:
+            type: string
+            format: uuid
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBudgetTransactionRequest'
+            example:
+              accountId: a1b2c3d4-5678-90ab-cdef-1234567890ab
+              type: DEBIT
+              title: Grocery run
+              amount: 1500
+              currency: INR
+              description: Monthly grocery shopping
+      responses:
+        '201':
+          description: Transaction recorded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+              example:
+                id: a3f1c2d4-91b7-4e5a-bc34-8f72e1d09abc
+                accountId: a1b2c3d4-5678-90ab-cdef-1234567890ab
+                budgetId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                type: DEBIT
+                amount: 1500
+                currency: INR
+                description: Monthly grocery shopping
+                createdAt: '2026-06-26T10:30:00Z'
+                updatedAt: '2026-06-26T10:30:00Z'
+        '400':
+          description: Validation error — missing or invalid fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                error: Bad Request
+                message: amount must be greater than or equal to 0.01
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '404':
+          description: Budget or account not found or does not belong to the authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                error: Not Found
+                message: Budget not found
+        '409':
+          description: Conflict — the budget is archived and read-only
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 409
+                error: Conflict
+                message: Archived budgets are read-only; unarchive it first
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /api/v1/budgets/{budgetId}/audit-log:
+    get:
+      tags:
+        - Budgets
+      summary: List a budget's edit history
+      description: |
+        Returns field-level edit history for a budget, ordered by changedAt descending. Returns 404 if the budget does not exist or does not belong to the authenticated user.
+      operationId: listBudgetAuditLog
+      parameters:
+        - name: budgetId
+          in: path
+          required: true
+          description: Unique identifier of the budget
+          schema:
+            type: string
+            format: uuid
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        - name: token
+          in: query
+          required: false
+          description: |
+            Opaque pagination cursor returned in `paging.nextToken` or `paging.previousToken` from a previous response. Omit to fetch the first page.
+          schema:
+            type: string
+        - name: size
+          in: query
+          required: false
+          description: Number of entries per page. Capped at 100.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Audit log retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BudgetAuditLogListResponse'
+              example:
+                data:
+                  - id: 3b241101-e2bb-4255-8caf-4136c566a962
+                    budgetId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                    field: AMOUNT
+                    oldValue: '10000.00'
+                    newValue: '12000.00'
+                    changedAt: '2026-06-15T11:30:00Z'
+                paging:
+                  currentToken: eyJjcmVhdGVkQXQiOiIyMDI2LTA2LTE1VDExOjMwOjAwWiIsImlkIjoiM2IyNDExMDEifQ==
+                  nextToken: null
+                  previousToken: null
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '404':
+          description: Budget not found or does not belong to the authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                error: Not Found
+                message: Budget not found
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /api/v1/budgets/{budgetId}/period-history:
+    get:
+      tags:
+        - Budgets
+      summary: List a budget's closed period history
+      description: |
+        Returns per-period snapshots for a MONTHLY budget's closed periods (budgeted amount, carryover in/out, spend during the period, and any late-posted spend recorded after the period closed), ordered by closedAt descending. Returns 404 if the budget does not exist or does not belong to the authenticated user.
+      operationId: listBudgetPeriodHistory
+      parameters:
+        - name: budgetId
+          in: path
+          required: true
+          description: Unique identifier of the budget
+          schema:
+            type: string
+            format: uuid
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        - name: token
+          in: query
+          required: false
+          description: |
+            Opaque pagination cursor returned in `paging.nextToken` or `paging.previousToken` from a previous response. Omit to fetch the first page.
+          schema:
+            type: string
+        - name: size
+          in: query
+          required: false
+          description: Number of entries per page. Capped at 100.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Period history retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BudgetPeriodHistoryListResponse'
+              example:
+                data:
+                  - id: 3b241101-e2bb-4255-8caf-4136c566a962
+                    budgetId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                    periodStart: '2026-05-01'
+                    periodEnd: '2026-06-01'
+                    budgetedAmount: 12000
+                    carryoverIn: 2000
+                    spentDuringPeriod: 9500
+                    carryoverOut: 2500
+                    lateSpentAmount: 350
+                    closedAt: '2026-06-01T00:00:00Z'
+                paging:
+                  currentToken: eyJjcmVhdGVkQXQiOiIyMDI2LTA2LTAxVDAwOjAwOjAwWiIsImlkIjoiM2IyNDExMDEifQ==
+                  nextToken: null
+                  previousToken: null
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '404':
+          description: Budget not found or does not belong to the authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                error: Not Found
+                message: Budget not found
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /api/v1/icons:
+    get:
+      tags:
+        - Icons
+      summary: List available icons
+      description: |
+        Returns the active curated icon catalog, ordered by sortOrder, for selecting an icon on a budget or saving goal.
+      operationId: listIcons
+      responses:
+        '200':
+          description: Icon catalog retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MasterIconResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /api/v1/transactions:
+    get:
+      tags:
+        - Transactions
+      summary: List transactions
+      description: |
+        Returns a paginated list of credit and debit transactions for the authenticated user, ordered by creation date descending. Supports optional filtering via a structured filter string.
+      operationId: listTransactions
+      parameters:
+        - name: token
+          in: query
+          required: false
+          description: |
+            Opaque pagination cursor returned in `paging.nextToken` or `paging.previousToken` from a previous response. Omit to fetch the first page.
+          schema:
+            type: string
+        - name: size
+          in: query
+          required: false
+          description: Number of transactions per page. Capped at 100.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: filter
+          in: query
+          required: false
+          description: |
+            Filter expression supporting comparison and logical operators.
+
+            **Grammar**
+            ```
+            expr       = term ( ("and" | "or") term )*
+            term       = field operator value | "(" expr ")"
+            operator   = "eq" | "neq" | "gt" | "gte" | "lt" | "lte" | "co"
+            field      = "type" | "createdAt" | "accountId" | "budgetId" | "title"
+            value      = bare word | "quoted string"
+            ```
+            Operator precedence follows standard rules — `and` binds tighter than `or`. Use parentheses to override. Multi-word values must be wrapped in double quotes.
+
+            **Supported fields**
+            | Field        | Type      | Operators              | Allowed values / format          |
+            |--------------|-----------|------------------------|----------------------------------|
+            | `type`       | enum      | `eq`, `neq`            | `CREDIT`, `DEBIT`                |
+            | `createdAt`  | date-time | `gt`, `gte`, `lt`, `lte` | ISO 8601 UTC, e.g. `2026-06-01T00:00:00Z` |
+            | `accountId`  | UUID      | `eq`                   | Valid UUID                       |
+            | `budgetId`   | UUID      | `eq`                   | Valid UUID                       |
+            | `title`      | string    | `co`                   | Any string (case-insensitive partial match) |
+
+            **Examples**
+            - `type eq DEBIT`
+            - `type neq CREDIT`
+            - `createdAt gte 2026-06-01T00:00:00Z`
+            - `title co grocery`
+            - `title co "grocery run"`
+            - `type eq DEBIT and title co grocery`
+            - `type eq DEBIT and createdAt gte 2026-06-01T00:00:00Z`
+            - `type eq DEBIT and createdAt gte 2026-06-01T00:00:00Z and createdAt lte 2026-06-30T23:59:59Z`
+          schema:
+            type: string
+          example: type eq DEBIT and createdAt gte 2026-06-01T00:00:00Z and createdAt lte 2026-06-30T23:59:59Z
+      responses:
+        '200':
+          description: Transactions retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionListResponse'
+              example:
+                data:
+                  - id: a3f1c2d4-91b7-4e5a-bc34-8f72e1d09abc
+                    type: DEBIT
+                    amount: 1500
+                    currency: INR
+                    description: Monthly grocery shopping
+                    createdAt: '2026-06-19T10:30:00Z'
+                    updatedAt: '2026-06-19T10:30:00Z'
+                  - id: b7e2d3f5-02c8-5f6b-cd45-9g83f2e10bcd
+                    type: CREDIT
+                    amount: 50000
+                    currency: INR
+                    description: June salary
+                    createdAt: '2026-06-01T09:00:00Z'
+                    updatedAt: '2026-06-01T09:00:00Z'
+                paging:
+                  currentToken: eyJjcmVhdGVkQXQiOiIyMDI2LTA2LTE5VDEwOjMwOjAwWiIsImlkIjoiYTNmMWMyZDQifQ==
+                  nextToken: eyJjcmVhdGVkQXQiOiIyMDI2LTA2LTAxVDA5OjAwOjAwWiIsImlkIjoiYjdlMmQzZjUifQ==
+                  previousToken: null
+        '400':
+          description: Validation error — invalid query parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                error: Bad Request
+                message: 'Invalid filter expression: unexpected token ''DEBIT'' at position 8'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+    post:
+      tags:
+        - Transactions
+      summary: Record a new transaction
+      description: |
+        Records a credit or debit transaction for the authenticated user. Currency defaults to `INR` if not provided.
+      operationId: createTransaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTransactionRequest'
+            example:
+              accountId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+              type: DEBIT
+              title: Grocery run
+              amount: 1500
+              currency: INR
+              description: Monthly grocery shopping
+      responses:
+        '201':
+          description: Transaction recorded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+              example:
+                id: a3f1c2d4-91b7-4e5a-bc34-8f72e1d09abc
+                type: DEBIT
+                amount: 1500
+                currency: INR
+                description: Monthly grocery shopping
+                createdAt: '2026-06-19T10:30:00Z'
+                updatedAt: '2026-06-19T10:30:00Z'
+        '400':
+          description: Validation error — missing or invalid fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                error: Bad Request
+                message: amount must be greater than or equal to 0.01
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /api/v1/transactions/titles:
+    get:
+      tags:
+        - Transactions
+      summary: List distinct transaction titles
+      description: |
+        Returns a sorted list of distinct, non-empty transaction titles previously recorded by the authenticated user. Intended for autocomplete suggestions when creating a new transaction.
+      operationId: listTransactionTitles
+      responses:
+        '200':
+          description: Distinct titles retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+              example:
+                - Groceries
+                - June salary
+                - Monthly rent
+                - Swiggy
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /api/v1/transactions/receipt-upload-url:
+    post:
+      tags:
+        - Transactions
+      summary: Request an upload URL for a transaction receipt
+      description: |
+        Mints a short-lived presigned URL the client uses to upload a receipt image directly to object storage, so image bytes never pass through this service.
+
+        The returned `objectKey` is generated server-side under a prefix derived from the authenticated user; clients cannot choose it. The upload lands in a pending area and is promoted to permanent storage only when the returned key is supplied as `receiptKey` on a create or update transaction call. Anything left pending is expired automatically after 24 hours, so abandoning the form leaks nothing.
+      operationId: createReceiptUploadUrl
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReceiptUploadUrlRequest'
+            example:
+              contentType: image/jpeg
+              contentLength: 248312
+      responses:
+        '200':
+          description: Presigned upload URL created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiptUploadUrlResponse'
+              example:
+                uploadUrl: https://silver-receipts-dev.s3.ap-south-1.amazonaws.com/pending/7c9e6679-7425-40de-944b-e07fc1f90ae7/3f1c2d49-1b74-e5ab-c348-f72e1d09abcd.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256
+                objectKey: pending/7c9e6679-7425-40de-944b-e07fc1f90ae7/3f1c2d49-1b74-e5ab-c348-f72e1d09abcd.jpg
+                expiresAt: '2026-08-22T07:45:00Z'
+        '400':
+          description: Validation error — unsupported content type or size out of range
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                error: Bad Request
+                message: contentLength must be less than or equal to 10485760
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /api/v1/transactions/{transactionId}:
+    get:
+      tags:
+        - Transactions
+      summary: Get a transaction by ID
+      description: |
+        Returns a single transaction by its ID. Returns 404 if the transaction does not exist or does not belong to the authenticated user.
+      operationId: getTransactionById
+      parameters:
+        - name: transactionId
+          in: path
+          required: true
+          description: Unique identifier of the transaction
+          schema:
+            type: string
+            format: uuid
+          example: a3f1c2d4-91b7-4e5a-bc34-8f72e1d09abc
+      responses:
+        '200':
+          description: Transaction retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+              example:
+                id: a3f1c2d4-91b7-4e5a-bc34-8f72e1d09abc
+                type: DEBIT
+                amount: 1500
+                currency: INR
+                description: Monthly grocery shopping
+                createdAt: '2026-06-19T10:30:00Z'
+                updatedAt: '2026-06-19T10:30:00Z'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '404':
+          description: Transaction not found or does not belong to the authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                error: Not Found
+                message: Transaction not found
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+    put:
+      tags:
+        - Transactions
+      summary: Update a transaction by ID
+      description: |
+        Partially updates a transaction. Only `accountId`, `amount`, and `description` can be updated — `type` and `currency` are immutable after creation. Only fields included in the request body are applied. Returns 404 if the transaction does not exist or does not belong to the authenticated user.
+      operationId: updateTransaction
+      parameters:
+        - name: transactionId
+          in: path
+          required: true
+          description: Unique identifier of the transaction
+          schema:
+            type: string
+            format: uuid
+          example: a3f1c2d4-91b7-4e5a-bc34-8f72e1d09abc
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTransactionRequest'
+            example:
+              accountId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+              amount: 2000
+              description: Monthly grocery shopping — corrected
+      responses:
+        '200':
+          description: Transaction updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+              example:
+                id: a3f1c2d4-91b7-4e5a-bc34-8f72e1d09abc
+                accountId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                type: DEBIT
+                amount: 2000
+                currency: INR
+                description: Monthly grocery shopping — corrected
+                createdAt: '2026-06-19T10:30:00Z'
+                updatedAt: '2026-06-20T08:15:00Z'
+        '400':
+          description: Validation error — invalid field values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                error: Bad Request
+                message: amount must be greater than or equal to 0.01
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '404':
+          description: Transaction not found or does not belong to the authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                error: Not Found
+                message: Transaction not found
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+    delete:
+      tags:
+        - Transactions
+      summary: Delete a transaction by ID
+      description: |
+        Deletes a transaction permanently. This reverses the effect on the account balance — a deleted DEBIT restores the amount to `currentBalance`, and a deleted CREDIT subtracts it. Returns 404 if the transaction does not exist or does not belong to the authenticated user.
+      operationId: deleteTransaction
+      parameters:
+        - name: transactionId
+          in: path
+          required: true
+          description: Unique identifier of the transaction
+          schema:
+            type: string
+            format: uuid
+          example: a3f1c2d4-91b7-4e5a-bc34-8f72e1d09abc
+      responses:
+        '204':
+          description: Transaction deleted successfully
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '404':
+          description: Transaction not found or does not belong to the authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                error: Not Found
+                message: Transaction not found
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /api/v1/recurring-transaction-rules:
+    get:
+      tags:
+        - Transactions
+      summary: List recurring transaction rules
+      description: |
+        Returns a paginated list of recurring transaction rules for the authenticated user, ordered by creation date descending. Supports optional filtering via a structured filter string. Rules are created implicitly by attaching `recurringRule` to a transaction at creation time — there is no standalone create endpoint.
+      operationId: listRecurringTransactionRules
+      parameters:
+        - name: filter
+          in: query
+          required: false
+          description: |
+            Filter expression supporting comparison and logical operators.
+
+            **Grammar**
+            ```
+            expr       = term ( ("and" | "or") term )*
+            term       = field operator value | "(" expr ")"
+            operator   = "eq" | "neq"
+            field      = "type" | "accountId" | "budgetId" | "enabled"
+            value      = bare word (no quotes)
+            ```
+            Operator precedence follows standard rules — `and` binds tighter than `or`. Use parentheses to override.
+
+            **Supported fields**
+            | Field       | Type    | Allowed values          |
+            |-------------|---------|--------------------------|
+            | `type`      | enum    | `CREDIT`, `DEBIT`        |
+            | `accountId` | UUID    | Valid UUID               |
+            | `budgetId`  | UUID    | Valid UUID               |
+            | `enabled`   | boolean | `true`, `false`          |
+
+            **Examples**
+            - `type eq DEBIT`
+            - `enabled eq true`
+            - `accountId eq 3fa85f64-5717-4562-b3fc-2c963f66afa6 and enabled eq true`
+          schema:
+            type: string
+          example: type eq DEBIT and enabled eq true
+        - name: token
+          in: query
+          required: false
+          description: |
+            Opaque pagination cursor returned in `paging.nextToken` or `paging.previousToken` from a previous response. Omit to fetch the first page.
+          schema:
+            type: string
+        - name: size
+          in: query
+          required: false
+          description: Number of recurring transaction rules per page. Capped at 100.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Recurring transaction rules retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringTransactionRuleListResponse'
+              example:
+                data:
+                  - id: 9c1e6679-7425-40de-944b-e07fc1f90ae8
+                    accountId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    budgetId: null
+                    title: Netflix subscription
+                    description: Monthly streaming subscription
+                    type: DEBIT
+                    amount: 649
+                    currency: INR
+                    schedulePeriodType: MONTHLY
+                    startDate: '2026-08-01'
+                    enabled: true
+                    nextExecutionAt: '2026-09-01T00:00:00Z'
+                paging:
+                  currentToken: eyJjcmVhdGVkQXQiOiIyMDI2LTA2LTA0VDEwOjMwOjAwWiIsImlkIjoiM2ZhODVmNjQifQ==
+                  nextToken: null
+                  previousToken: null
+        '400':
+          description: Invalid filter expression
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                error: Bad Request
+                message: 'Invalid filter expression: unexpected token ''DEBIT'' at position 10'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /api/v1/recurring-transaction-rules/{ruleId}:
+    get:
+      tags:
+        - Transactions
+      summary: Get a recurring transaction rule by ID
+      description: |
+        Returns a single recurring transaction rule by its ID. Returns 404 if the rule does not exist or does not belong to the authenticated user.
+      operationId: getRecurringTransactionRuleById
+      parameters:
+        - name: ruleId
+          in: path
+          required: true
+          description: Unique identifier of the recurring transaction rule
+          schema:
+            type: string
+            format: uuid
+          example: 9c1e6679-7425-40de-944b-e07fc1f90ae8
+      responses:
+        '200':
+          description: Recurring transaction rule retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringTransactionRuleResponse'
+              example:
+                id: 9c1e6679-7425-40de-944b-e07fc1f90ae8
+                accountId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                budgetId: null
+                title: Netflix subscription
+                description: Monthly streaming subscription
+                type: DEBIT
+                amount: 649
+                currency: INR
+                schedulePeriodType: MONTHLY
+                startDate: '2026-08-01'
+                enabled: true
+                nextExecutionAt: '2026-09-01T00:00:00Z'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '404':
+          description: Recurring transaction rule not found or does not belong to the authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                error: Not Found
+                message: Recurring transaction rule not found
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+    delete:
+      tags:
+        - Transactions
+      summary: Delete a recurring transaction rule
+      description: |
+        Permanently deletes a recurring transaction rule and its schedule. Any transactions previously linked to this rule are kept, with their link to the rule cleared. Returns 404 if the rule does not exist or does not belong to the authenticated user.
+      operationId: deleteRecurringTransactionRule
+      parameters:
+        - name: ruleId
+          in: path
+          required: true
+          description: Unique identifier of the recurring transaction rule
+          schema:
+            type: string
+            format: uuid
+          example: 9c1e6679-7425-40de-944b-e07fc1f90ae8
+      responses:
+        '204':
+          description: Recurring transaction rule deleted successfully
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '404':
+          description: Recurring transaction rule not found or does not belong to the authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                error: Not Found
+                message: Recurring transaction rule not found
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+    put:
+      tags:
+        - Transactions
+      summary: Enable or disable a recurring transaction rule
+      description: |
+        Updates a recurring transaction rule. `enabled` is the only field that can be changed — every other property of the rule is fixed at creation time (set when the originating transaction was created with `recurringRule`). Setting `enabled` to `false` stops future reminders; setting it back to `true` resumes them. Returns 404 if the rule does not exist or does not belong to the authenticated user.
+      operationId: updateRecurringTransactionRule
+      parameters:
+        - name: ruleId
+          in: path
+          required: true
+          description: Unique identifier of the recurring transaction rule
+          schema:
+            type: string
+            format: uuid
+          example: 9c1e6679-7425-40de-944b-e07fc1f90ae8
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRecurringTransactionRuleRequest'
+            example:
+              enabled: false
+      responses:
+        '200':
+          description: Recurring transaction rule updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringTransactionRuleResponse'
+              example:
+                id: 9c1e6679-7425-40de-944b-e07fc1f90ae8
+                schedulePeriodType: MONTHLY
+                startDate: '2026-08-01'
+                enabled: false
+                nextExecutionAt: '2026-09-01T00:00:00Z'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '404':
+          description: Recurring transaction rule not found or does not belong to the authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                error: Not Found
+                message: Recurring transaction rule not found
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /api/v1/scheduler/trigger:
+    post:
+      tags:
+        - Scheduler
+      summary: Trigger pending goal allocation schedules
+      description: |
+        Immediately checks for any goal allocation schedules that are due for the authenticated user and executes them. Useful on app load to process overdue allocations without waiting for the next background poll (which runs every 60 seconds).
+
+        The operation is idempotent — if no schedules are due, it completes without any side effects. Each due schedule creates an allocation job that transfers the fixed amount from the user's unallocated balance into the target goal.
+      operationId: triggerScheduler
+      responses:
+        '204':
+          description: Trigger completed — any due schedules have been processed
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /api/v1/notifications/device-tokens:
+    post:
+      tags:
+        - Notifications
+      summary: Register a device push token
+      description: |
+        Registers (or refreshes) an Expo push token for the authenticated user's device, so the backend can send push notifications to it. Idempotent — calling this again with the same token for the same user simply refreshes it. If the token was previously registered to a different user (e.g. app reinstalled or a different account signed in on the same device), that prior registration is deactivated.
+      operationId: registerDeviceToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterDeviceTokenRequest'
+            example:
+              expoPushToken: ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]
+              platform: IOS
+      responses:
+        '200':
+          description: Device token registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceTokenResponse'
+              example:
+                id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                platform: IOS
+                active: true
+                createdAt: '2026-06-07T10:30:00Z'
+                updatedAt: '2026-06-07T10:30:00Z'
+        '400':
+          description: Validation error — missing or invalid fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                error: Bad Request
+                message: expoPushToken must not be blank
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+    delete:
+      tags:
+        - Notifications
+      summary: Unregister a device push token
+      description: |
+        Deactivates a previously registered Expo push token for the authenticated user, so it no longer receives pushes. Safe to call even if the token is already inactive or was never registered. Clients should call this on sign-out.
+      operationId: unregisterDeviceToken
+      parameters:
+        - name: expoPushToken
+          in: query
+          required: true
+          description: The Expo push token to unregister
+          schema:
+            type: string
+          example: ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]
+      responses:
+        '204':
+          description: Device token unregistered successfully
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /api/v1/auth/verify-phone:
+    post:
+      tags:
+        - Auth
+      summary: Verify a Firebase phone-auth ID token
+      description: |
+        Verifies a Firebase ID token obtained after the client confirms the OTP via the Firebase Phone Auth SDK (OTP delivery and confirmation happen entirely client-side). On success, returns a JWT token to be used for authenticated requests.
+      operationId: verifyPhone
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyPhoneRequest'
+            example:
+              idToken: eyJhbGciOiJSUzI1NiIsImtpZCI6...
+      responses:
+        '200':
+          description: Phone verified successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifyPhoneResponse'
+              example:
+                message: Phone verified successfully
+        '401':
+          description: Invalid or expired Firebase ID token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 401
+                error: Unauthorized
+                message: Invalid or expired phone verification token.
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /api/v1/auth/sign-out:
+    post:
+      tags:
+        - Auth
+      summary: Sign out and revoke tokens
+      description: |
+        Invalidates the current access token (via server-side blocklist) and revokes the provided refresh token. Always returns 200 so clients can safely call this even if the access token has already expired.
+      operationId: signOut
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignOutRequest'
+      responses:
+        '200':
+          description: Signed out successfully
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+  /api/v1/auth/refresh:
+    post:
+      tags:
+        - Auth
+      summary: Refresh access token
+      description: |
+        Exchanges a valid refresh token for a new access token and a new refresh token (rotation). The old refresh token is immediately revoked.
+      operationId: refreshToken
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+            example:
+              refreshToken: 550e8400-e29b-41d4-a716-446655440000
+      responses:
+        '200':
+          description: New token pair issued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefreshTokenResponse'
+              example:
+                token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+                refreshToken: 550e8400-e29b-41d4-a716-446655440001
+        '401':
+          description: Refresh token is invalid or has expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 401
+                error: Unauthorized
+                message: Invalid or expired refresh token
+        '500':
+          $ref: '#/components/responses/InternalServerErrorResponse'
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 400
+        error:
+          type: string
+          example: Bad Request
+        message:
+          type: string
+          example: phoneNumber must be a valid E.164 formatted number
+    PageInfo:
+      type: object
+      properties:
+        currentToken:
+          type: string
+          description: Opaque cursor identifying the current page position
+          example: eyJjcmVhdGVkQXQiOiIyMDI2LTA2LTA0VDEwOjMwOjAwWiIsImlkIjoiM2ZhODVmNjQifQ==
+        nextToken:
+          type: string
+          nullable: true
+          description: Cursor for the next page. Null when this is the last page.
+          example: eyJjcmVhdGVkQXQiOiIyMDI2LTA1LTAxVDA4OjAwOjAwWiIsImlkIjoiOWFiMTJjMzQifQ==
+        previousToken:
+          type: string
+          nullable: true
+          description: Cursor for the previous page. Null when this is the first page.
+          example: null
+    PagedResponse:
+      type: object
+      description: |
+        Base schema for all paginated list responses. Every list API extends this via allOf and adds a typed `data` array.
+      properties:
+        paging:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - paging
+    SchedulePeriodType:
+      type: string
+      description: The calendar cadence for a scheduled recurrence (allocation rule or recurring transaction)
+      enum:
+        - DAILY
+        - WEEKLY
+        - MONTHLY
+        - YEARLY
+      example: MONTHLY
+    VerifyPhoneRequest:
+      type: object
+      required:
+        - idToken
+      properties:
+        idToken:
+          type: string
+          description: |
+            Firebase ID token obtained after the client confirms the OTP via the Firebase Phone Auth SDK. The backend verifies this token's signature and validity via the Firebase Admin SDK and trusts its phone-number claim.
+          example: eyJhbGciOiJSUzI1NiIsImtpZCI6...
+    VerifyPhoneResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Phone verified successfully
+        token:
+          type: string
+          description: JWT access token (15-minute lifetime)
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        refreshToken:
+          type: string
+          description: Opaque refresh token (30-day lifetime). Use POST /auth/refresh to obtain a new access token.
+          example: 550e8400-e29b-41d4-a716-446655440000
+    SignOutRequest:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+          description: The refresh token to revoke
+          example: 550e8400-e29b-41d4-a716-446655440000
+    RefreshTokenRequest:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+          description: The refresh token previously issued by verify-phone or a prior refresh call
+          example: 550e8400-e29b-41d4-a716-446655440000
+    RefreshTokenResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: New JWT access token (15-minute lifetime)
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        refreshToken:
+          type: string
+          description: New refresh token (30-day lifetime). The old refresh token is now invalid.
+          example: 550e8400-e29b-41d4-a716-446655440001
+    CreateUserRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+          maxLength: 100
+          description: User's first name
+          example: Alokit
+        lastName:
+          type: string
+          maxLength: 100
+          description: User's last name
+          example: Jindal
+        email:
+          type: string
+          format: email
+          maxLength: 255
+          description: User's email address
+          example: user@example.com
+        timezone:
+          type: string
+          maxLength: 50
+          description: IANA timezone identifier for the user
+          example: Asia/Kolkata
+    UpdateUserRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: User's first name
+          example: Alokit
+        lastName:
+          type: string
+          maxLength: 100
+          description: User's last name
+          example: Jindal
+        email:
+          type: string
+          format: email
+          maxLength: 255
+          description: User's email address
+          example: user@example.com
+        timezone:
+          type: string
+          maxLength: 50
+          description: IANA timezone identifier for the user
+          example: Asia/Kolkata
+        pushNotificationsEnabled:
+          type: boolean
+          description: Whether the user wants to receive push notifications
+          example: true
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the user
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+        phoneNumber:
+          type: string
+          description: Mobile number in E.164 format
+          example: '+919876543210'
+        active:
+          type: boolean
+          description: Whether the account is active
+          example: true
+        firstName:
+          type: string
+          description: User's first name
+          example: Alokit
+          nullable: true
+        lastName:
+          type: string
+          description: User's last name
+          example: Jindal
+          nullable: true
+        email:
+          type: string
+          description: User's email address
+          example: user@example.com
+          nullable: true
+        timezone:
+          type: string
+          description: IANA timezone identifier for the user
+          example: Asia/Kolkata
+          nullable: true
+        pushNotificationsEnabled:
+          type: boolean
+          description: Whether the user has push notifications enabled
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the account was created
+          example: '2026-06-04T10:30:00Z'
+    AccountType:
+      type: string
+      enum:
+        - SAVINGS
+        - CURRENT
+        - CREDIT
+        - WALLET
+      description: Type of the financial account
+      example: SAVINGS
+    CreateAccountRequest:
+      type: object
+      required:
+        - accountName
+        - accountType
+      properties:
+        accountName:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Display name of the account
+          example: HDFC Savings
+        accountType:
+          $ref: '#/components/schemas/AccountType'
+        currentBalance:
+          type: number
+          format: double
+          description: Known balance at time of creation. Omit if unknown.
+          example: 25000
+        balanceSource:
+          type: string
+          enum:
+            - MANUAL
+            - BANK_SYNC
+          description: How the balance was obtained. Required when currentBalance is provided.
+          example: MANUAL
+    AccountResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the account
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        accountName:
+          type: string
+          description: Display name of the account
+          example: HDFC Savings
+        accountType:
+          $ref: '#/components/schemas/AccountType'
+        currentBalance:
+          type: number
+          format: double
+          nullable: true
+          description: Current balance of the account
+          example: 25000
+        balanceSource:
+          type: string
+          nullable: true
+          description: How the balance was obtained
+          example: MANUAL
+        lastSyncedAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: Timestamp of the last balance sync
+          example: '2026-06-07T10:30:00Z'
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the account was created
+          example: '2026-06-07T10:30:00Z'
+    AccountListResponse:
+      allOf:
+        - $ref: '#/components/schemas/PagedResponse'
+        - type: object
+          required:
+            - data
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/AccountResponse'
+              description: Accounts on the current page, ordered by creation date descending
+    UpdateAccountRequest:
+      type: object
+      properties:
+        accountName:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Display name of the account
+          example: HDFC Savings
+        accountType:
+          $ref: '#/components/schemas/AccountType'
+        currentBalance:
+          type: number
+          format: double
+          minimum: 0
+          description: Updated balance of the account
+          example: 30000
+        balanceSource:
+          type: string
+          enum:
+            - MANUAL
+            - BANK_SYNC
+          description: How the balance was obtained
+          example: MANUAL
+    GoalStatus:
+      type: string
+      enum:
+        - ACTIVE
+        - INACTIVE
+        - COMPLETED
+        - CANCELLED
+      description: Current status of a saving goal
+      example: ACTIVE
+    CreateGoalRequest:
+      type: object
+      required:
+        - name
+        - targetAmount
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Name of the saving goal
+          example: Emergency Fund
+        targetAmount:
+          type: number
+          format: double
+          minimum: 1
+          description: Target amount to save
+          example: 50000
+        currency:
+          type: string
+          pattern: ^[A-Z]{3}$
+          default: INR
+          description: ISO 4217 currency code
+          example: INR
+        currentAmount:
+          type: number
+          minimum: 0
+          description: Optional initial amount already saved towards this goal. Deducted from the user's unallocated account balance, same as a manual deposit.
+          example: 5000
+        targetDate:
+          type: string
+          format: date
+          description: Optional target date to achieve the goal (YYYY-MM-DD)
+          example: '2026-12-31'
+        notes:
+          type: string
+          maxLength: 500
+          description: Optional notes about the goal
+          example: 6 months of living expenses
+        order:
+          type: integer
+          minimum: 0
+          description: Display order of the goal (defaults to last position if omitted)
+          example: 0
+        allocationRule:
+          $ref: '#/components/schemas/GoalAllocationRuleRequest'
+        iconId:
+          type: string
+          format: uuid
+          description: Identifier of the selected icon from the master icon catalog
+          example: 5b39aeaa-441b-4e17-9803-11eef70ab9ee
+    GoalResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the goal
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        name:
+          type: string
+          description: Name of the saving goal
+          example: Emergency Fund
+        targetAmount:
+          type: number
+          format: double
+          description: Target amount to save
+          example: 50000
+        currentAmount:
+          type: number
+          format: double
+          description: Amount saved so far
+          example: 0
+        currency:
+          type: string
+          description: ISO 4217 currency code
+          example: INR
+        targetDate:
+          type: string
+          format: date
+          nullable: true
+          description: Target date to achieve the goal
+          example: '2026-12-31'
+        notes:
+          type: string
+          nullable: true
+          description: Optional notes about the goal
+          example: 6 months of living expenses
+        status:
+          $ref: '#/components/schemas/GoalStatus'
+        order:
+          type: integer
+          description: Display order of the goal
+          example: 0
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the goal was created
+          example: '2026-06-04T10:30:00Z'
+        allocationRule:
+          allOf:
+            - $ref: '#/components/schemas/GoalAllocationRuleResponse'
+          type: object
+          nullable: true
+          description: Allocation rule associated with this goal, if any
+        iconId:
+          type: string
+          format: uuid
+          nullable: true
+          description: Identifier of the selected icon from the master icon catalog
+          example: 5b39aeaa-441b-4e17-9803-11eef70ab9ee
+    GoalListResponse:
+      allOf:
+        - $ref: '#/components/schemas/PagedResponse'
+        - type: object
+          required:
+            - data
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/GoalResponse'
+              description: Goals on the current page, ordered by creation date descending
+    UpdateGoalRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Name of the saving goal
+          example: Emergency Fund
+        targetAmount:
+          type: number
+          minimum: 1
+          description: Target amount to save
+          example: 50000
+        currentAmount:
+          type: number
+          minimum: 0
+          description: Amount already saved towards this goal
+          example: 12000
+        targetDate:
+          type: string
+          format: date
+          description: Target date to reach the goal (YYYY-MM-DD)
+          example: '2026-12-31'
+        notes:
+          type: string
+          maxLength: 500
+          description: Optional notes or description
+          example: 6 months of living expenses
+        order:
+          type: integer
+          minimum: 0
+          description: Display order of the goal
+          example: 1
+        status:
+          $ref: '#/components/schemas/GoalStatus'
+        allocationRule:
+          $ref: '#/components/schemas/GoalAllocationRuleRequest'
+        iconId:
+          type: string
+          format: uuid
+          description: Identifier of the selected icon from the master icon catalog
+          example: 5b39aeaa-441b-4e17-9803-11eef70ab9ee
+    GoalAllocationRuleRequest:
+      type: object
+      required:
+        - triggerType
+        - ruleType
+      properties:
+        triggerType:
+          $ref: '#/components/schemas/TriggerType'
+        schedulePeriodType:
+          $ref: '#/components/schemas/SchedulePeriodType'
+        startDate:
+          type: string
+          format: date
+          description: Date the SCHEDULED plan should start from — the first execution is computed from this date instead of the current date. A past or omitted value falls back to starting from now.
+          example: '2026-08-01'
+        ruleType:
+          type: string
+          maxLength: 50
+          description: Type of allocation calculation (e.g. FIXED_AMOUNT)
+          example: FIXED_AMOUNT
+        fixedAmount:
+          type: number
+          format: double
+          minimum: 0
+          description: Fixed amount to allocate (required when ruleType is FIXED_AMOUNT)
+          example: 5000
+        enabled:
+          type: boolean
+          default: true
+          description: Whether this allocation rule is active
+          example: true
+    GoalAllocationRuleResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the allocation rule
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa7
+        triggerType:
+          $ref: '#/components/schemas/TriggerType'
+        schedulePeriodType:
+          allOf:
+            - $ref: '#/components/schemas/SchedulePeriodType'
+          type: string
+          nullable: true
+          description: Calendar cadence, present only when triggerType is SCHEDULED
+        startDate:
+          type: string
+          format: date
+          nullable: true
+          description: Date the SCHEDULED plan's first execution was anchored to, if set
+          example: '2026-08-01'
+        ruleType:
+          type: string
+          description: Type of allocation calculation
+          example: FIXED_AMOUNT
+        fixedAmount:
+          type: number
+          format: double
+          nullable: true
+          description: Fixed amount to allocate
+          example: 5000
+        enabled:
+          type: boolean
+          description: Whether this allocation rule is active
+          example: true
+    UpdateGoalOrderRequest:
+      type: object
+      required:
+        - orderings
+      properties:
+        orderings:
+          type: array
+          minItems: 1
+          description: |
+            Complete list of goal-to-order mappings for the authenticated user. Every goal owned by the user must be included; omitting a goal is a validation error. Order values must be unique non-negative integers.
+          items:
+            type: object
+            required:
+              - goalId
+              - order
+            properties:
+              goalId:
+                type: string
+                format: uuid
+                description: Unique identifier of the goal
+                example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              order:
+                type: integer
+                minimum: 0
+                description: New display position for the goal (0-indexed)
+                example: 0
+    GoalTransactionType:
+      type: string
+      description: Direction of the goal transaction
+      enum:
+        - DEPOSIT
+        - WITHDRAWAL
+      example: DEPOSIT
+    GoalTransactionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the transaction
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        amount:
+          type: number
+          format: double
+          description: Absolute value of the transaction amount
+          example: 5000
+        transactionType:
+          $ref: '#/components/schemas/GoalTransactionType'
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the transaction was recorded
+          example: '2026-06-13T09:15:00Z'
+    GoalTransactionListResponse:
+      allOf:
+        - $ref: '#/components/schemas/PagedResponse'
+        - type: object
+          required:
+            - data
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/GoalTransactionResponse'
+              description: Transactions on the current page, ordered by creation date descending
+    BudgetStatus:
+      type: string
+      enum:
+        - ACTIVE
+        - INACTIVE
+        - ARCHIVED
+      description: Current status of an expenditure budget
+      example: ACTIVE
+    BudgetPeriodType:
+      type: string
+      description: The period over which the budget amount applies
+      enum:
+        - WEEKLY
+        - MONTHLY
+        - YEARLY
+      example: MONTHLY
+    BudgetCarryoverPolicy:
+      type: string
+      description: Controls what happens to unspent budget at the end of each period
+      enum:
+        - RESET
+        - CARRY_OVER
+      example: CARRY_OVER
+    CreateBudgetRequest:
+      type: object
+      required:
+        - name
+        - periodType
+        - amount
+        - startDate
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Display name of the budget
+          example: Groceries
+        periodType:
+          $ref: '#/components/schemas/BudgetPeriodType'
+        amount:
+          type: number
+          format: double
+          minimum: 1
+          description: Maximum spend allowed for the period
+          example: 10000
+        startDate:
+          type: string
+          format: date
+          description: Date from which the first budget period begins (YYYY-MM-DD)
+          example: '2026-06-01'
+        carryoverPolicy:
+          $ref: '#/components/schemas/BudgetCarryoverPolicy'
+        iconId:
+          type: string
+          format: uuid
+          description: Identifier of the selected icon from the master icon catalog
+          example: 99429136-66ff-4b98-9335-e8edce6e9a51
+    UpdateBudgetRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Display name of the budget
+          example: Groceries
+        periodType:
+          $ref: '#/components/schemas/BudgetPeriodType'
+        amount:
+          type: number
+          format: double
+          minimum: 1
+          description: Maximum spend allowed for the period
+          example: 12000
+        startDate:
+          type: string
+          format: date
+          description: Date from which the budget period begins (YYYY-MM-DD)
+          example: '2026-07-01'
+        status:
+          $ref: '#/components/schemas/BudgetStatus'
+        carryoverPolicy:
+          $ref: '#/components/schemas/BudgetCarryoverPolicy'
+        iconId:
+          type: string
+          format: uuid
+          description: Identifier of the selected icon from the master icon catalog
+          example: 99429136-66ff-4b98-9335-e8edce6e9a51
+    BudgetResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the budget
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        name:
+          type: string
+          description: Display name of the budget
+          example: Groceries
+        periodType:
+          $ref: '#/components/schemas/BudgetPeriodType'
+        amount:
+          type: number
+          format: double
+          description: Maximum spend allowed for the period
+          example: 10000
+        startDate:
+          type: string
+          format: date
+          description: Date from which the first budget period begins
+          example: '2026-06-01'
+        status:
+          $ref: '#/components/schemas/BudgetStatus'
+        carryoverPolicy:
+          $ref: '#/components/schemas/BudgetCarryoverPolicy'
+        carryoverAmount:
+          type: number
+          format: double
+          description: Accumulated unspent balance carried forward from previous periods
+          example: 2000
+        effectiveAmount:
+          type: number
+          format: double
+          description: Effective budget limit for the current period (amount + carryoverAmount)
+          example: 12000
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the budget was created
+          example: '2026-06-14T09:00:00Z'
+        spentAmount:
+          type: number
+          format: double
+          description: Total DEBIT amount spent against this budget
+          example: 3500
+        carryoverSpent:
+          type: number
+          format: double
+          description: Portion of carryoverAmount spent so far in the current period (min(spentAmount, carryoverAmount))
+          example: 1500
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the budget was last updated
+          example: '2026-06-14T09:00:00Z'
+        iconId:
+          type: string
+          format: uuid
+          nullable: true
+          description: Identifier of the selected icon from the master icon catalog
+          example: 99429136-66ff-4b98-9335-e8edce6e9a51
+    BudgetListResponse:
+      allOf:
+        - $ref: '#/components/schemas/PagedResponse'
+        - type: object
+          required:
+            - data
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/BudgetResponse'
+              description: Budgets on the current page, ordered by creation date descending
+    CreateBudgetTransactionRequest:
+      type: object
+      required:
+        - accountId
+        - type
+        - amount
+        - title
+      properties:
+        accountId:
+          type: string
+          format: uuid
+          description: ID of the account this transaction belongs to
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        type:
+          $ref: '#/components/schemas/TransactionType'
+        amount:
+          type: number
+          format: double
+          minimum: 0.01
+          description: Transaction amount
+          example: 1500
+        currency:
+          type: string
+          minLength: 3
+          maxLength: 3
+          default: INR
+          description: ISO 4217 currency code
+          example: INR
+        title:
+          type: string
+          minLength: 1
+          maxLength: 50
+          description: Short title for the transaction
+          example: Grocery run
+        description:
+          type: string
+          maxLength: 255
+          description: Optional note or label for the transaction
+          example: Monthly grocery shopping
+        transactionDate:
+          type: string
+          format: date
+          description: Date when the transaction occurred (YYYY-MM-DD). Defaults to today if not provided.
+          example: '2026-06-27'
+    BudgetAuditField:
+      type: string
+      description: The budget field a given audit log entry recorded a change for
+      enum:
+        - NAME
+        - AMOUNT
+        - PERIOD_TYPE
+        - START_DATE
+        - STATUS
+        - CARRYOVER_POLICY
+      example: AMOUNT
+    BudgetAuditLogEntryResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the audit log entry
+          example: 3b241101-e2bb-4255-8caf-4136c566a962
+        budgetId:
+          type: string
+          format: uuid
+          description: ID of the budget this edit was made to
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        field:
+          $ref: '#/components/schemas/BudgetAuditField'
+        oldValue:
+          type: string
+          nullable: true
+          description: Stringified value of the field before the edit
+          example: '10000.00'
+        newValue:
+          type: string
+          nullable: true
+          description: Stringified value of the field after the edit
+          example: '12000.00'
+        changedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the edit was made
+          example: '2026-06-15T11:30:00Z'
+    BudgetAuditLogListResponse:
+      allOf:
+        - $ref: '#/components/schemas/PagedResponse'
+        - type: object
+          required:
+            - data
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/BudgetAuditLogEntryResponse'
+              description: Audit log entries on the current page, ordered by changedAt descending
+    BudgetPeriodHistoryResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the period history entry
+          example: 3b241101-e2bb-4255-8caf-4136c566a962
+        budgetId:
+          type: string
+          format: uuid
+          description: ID of the budget this closed period belongs to
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        periodStart:
+          type: string
+          format: date
+          description: First day of the closed period (inclusive)
+          example: '2026-05-01'
+        periodEnd:
+          type: string
+          format: date
+          description: First day of the following period (exclusive upper bound)
+          example: '2026-06-01'
+        budgetedAmount:
+          type: number
+          format: double
+          description: Budget limit (amount + carryoverIn) that applied during this period
+          example: 12000
+        carryoverIn:
+          type: number
+          format: double
+          description: Balance carried into this period from the previous one
+          example: 2000
+        spentDuringPeriod:
+          type: number
+          format: double
+          description: Total DEBIT amount recorded against the budget as of when this period closed
+          example: 9500
+        carryoverOut:
+          type: number
+          format: double
+          description: Balance carried forward into the next period
+          example: 2500
+        lateSpentAmount:
+          type: number
+          format: double
+          description: |
+            DEBIT amount effective-dated within this period but entered into the system only after the period had already closed (backdated/late-posted spend)
+          example: 350
+        closedAt:
+          type: string
+          format: date-time
+          description: Timestamp when this period was closed and the snapshot was recorded
+          example: '2026-06-01T00:00:00Z'
+    BudgetPeriodHistoryListResponse:
+      allOf:
+        - $ref: '#/components/schemas/PagedResponse'
+        - type: object
+          required:
+            - data
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/BudgetPeriodHistoryResponse'
+              description: Closed period snapshots on the current page, ordered by closedAt descending
+    MasterIconResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the icon
+          example: 99429136-66ff-4b98-9335-e8edce6e9a51
+        key:
+          type: string
+          description: Stable, human-readable key for this icon
+          example: food
+        iconLibrary:
+          type: string
+          description: Icon library/font this icon belongs to
+          example: Material
+        iconName:
+          type: string
+          description: Icon name/ligature within its library
+          example: restaurant
+        category:
+          type: string
+          nullable: true
+          description: Grouping used to organize the icon picker UI
+          example: Food
+        keywords:
+          type: string
+          nullable: true
+          description: Comma-separated search keywords for this icon
+          example: food,dining,restaurant,groceries
+        defaultColor:
+          type: string
+          nullable: true
+          description: Suggested default color for this icon (not currently applied by clients)
+          example: '#F97316'
+        sortOrder:
+          type: integer
+          description: Display order within the icon picker
+          example: 10
+    TransactionType:
+      type: string
+      description: Direction of the transaction
+      enum:
+        - CREDIT
+        - DEBIT
+      example: DEBIT
+    CreateTransactionRequest:
+      type: object
+      required:
+        - accountId
+        - type
+        - amount
+        - title
+      properties:
+        accountId:
+          type: string
+          format: uuid
+          description: ID of the account this transaction belongs to
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        type:
+          $ref: '#/components/schemas/TransactionType'
+        amount:
+          type: number
+          format: double
+          minimum: 0.01
+          description: Transaction amount
+          example: 1500
+        currency:
+          type: string
+          minLength: 3
+          maxLength: 3
+          default: INR
+          description: ISO 4217 currency code
+          example: INR
+        title:
+          type: string
+          minLength: 1
+          maxLength: 50
+          description: Short title for the transaction
+          example: Grocery run
+        description:
+          type: string
+          maxLength: 255
+          description: Optional note or label for the transaction
+          example: Monthly grocery shopping
+        budgetId:
+          type: string
+          format: uuid
+          description: ID of an existing budget to categorise this DEBIT transaction under
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        transactionDate:
+          type: string
+          format: date
+          description: Date when the transaction occurred (YYYY-MM-DD). Defaults to today if not provided.
+          example: '2026-06-27'
+        recurringRule:
+          $ref: '#/components/schemas/RecurringTransactionRuleRequest'
+        receiptKey:
+          type: string
+          maxLength: 255
+          description: |
+            Storage key of a receipt image previously uploaded via `POST /api/v1/transactions/receipt-upload-url`. Must be a pending key belonging to the authenticated user; it is promoted to permanent storage as part of creating the transaction. Omit when there is no receipt.
+          example: pending/7c9e6679-7425-40de-944b-e07fc1f90ae7/3f1c2d49-1b74-e5ab-c348-f72e1d09abcd.jpg
+    TransactionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the transaction
+          example: a3f1c2d4-91b7-4e5a-bc34-8f72e1d09abc
+        accountId:
+          type: string
+          format: uuid
+          description: ID of the account this transaction belongs to
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        budgetId:
+          type: string
+          format: uuid
+          description: ID of the budget this transaction is categorised under, if any
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        type:
+          $ref: '#/components/schemas/TransactionType'
+        amount:
+          type: number
+          format: double
+          description: Transaction amount
+          example: 1500
+        currency:
+          type: string
+          description: ISO 4217 currency code
+          example: INR
+        title:
+          type: string
+          maxLength: 50
+          description: Short title for the transaction
+          example: Grocery run
+        description:
+          type: string
+          description: Optional note or label for the transaction
+          example: Monthly grocery shopping
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the transaction was recorded
+          example: '2026-06-19T10:30:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the transaction was last updated
+          example: '2026-06-19T10:30:00Z'
+        recurringRule:
+          allOf:
+            - $ref: '#/components/schemas/RecurringTransactionRuleResponse'
+          type: object
+          nullable: true
+          description: Recurring schedule this transaction originated, if any
+        receiptKey:
+          type: string
+          maxLength: 255
+          nullable: true
+          description: |
+            Stable storage key of the attached receipt image, or null when the transaction has no receipt. Echo this value back on update to keep the existing receipt.
+          example: receipts/7c9e6679-7425-40de-944b-e07fc1f90ae7/a3f1c2d4-91b7-4e5a-bc34-8f72e1d09abc/3f1c2d49.jpg
+        receiptUrl:
+          type: string
+          format: uri
+          nullable: true
+          description: |
+            Short-lived presigned URL for viewing the receipt image, or null when the transaction has no receipt. Expires roughly 15 minutes after the response is issued and differs on every request, so it must not be persisted or used as a cache key.
+          example: https://silver-receipts-dev.s3.ap-south-1.amazonaws.com/receipts/7c9e6679-7425-40de-944b-e07fc1f90ae7/a3f1c2d4-91b7-4e5a-bc34-8f72e1d09abc/3f1c2d49.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256
+    TransactionListResponse:
+      allOf:
+        - $ref: '#/components/schemas/PagedResponse'
+        - type: object
+          required:
+            - data
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/TransactionResponse'
+              description: Transactions on the current page, ordered by creation date descending
+    UpdateTransactionRequest:
+      type: object
+      properties:
+        accountId:
+          type: string
+          format: uuid
+          description: ID of the account to reassign this transaction to
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        amount:
+          type: number
+          format: double
+          minimum: 0.01
+          description: Corrected transaction amount
+          example: 2000
+        title:
+          type: string
+          maxLength: 50
+          description: Updated short title for the transaction
+          example: Grocery run — corrected
+        description:
+          type: string
+          maxLength: 255
+          description: Updated note or label for the transaction
+          example: Monthly grocery shopping — corrected
+        transactionDate:
+          type: string
+          format: date
+          description: Corrected date when the transaction occurred (YYYY-MM-DD).
+          example: '2026-06-27'
+        receiptKey:
+          type: string
+          maxLength: 255
+          description: |
+            Receipt image for this transaction, treated as a full replacement. Echo back the `receiptKey` from the current transaction to keep the existing receipt, supply a newly uploaded `pending/...` key to replace it, or omit the field entirely to remove the receipt. A replaced or removed image is deleted from storage once the update commits.
+          example: receipts/7c9e6679-7425-40de-944b-e07fc1f90ae7/a3f1c2d4-91b7-4e5a-bc34-8f72e1d09abc/3f1c2d49.jpg
+    RecurringTransactionRuleRequest:
+      type: object
+      required:
+        - schedulePeriodType
+      properties:
+        schedulePeriodType:
+          $ref: '#/components/schemas/SchedulePeriodType'
+        startDate:
+          type: string
+          format: date
+          description: Date the recurring schedule should start from — the first reminder is computed from this date instead of the current date. A past or omitted value falls back to starting from now.
+          example: '2026-08-01'
+    RecurringTransactionRuleResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the recurring transaction rule
+          example: 9c1e6679-7425-40de-944b-e07fc1f90ae8
+        accountId:
+          type: string
+          format: uuid
+          description: Account the recurring transaction is logged against
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        budgetId:
+          type: string
+          format: uuid
+          nullable: true
+          description: Budget the recurring transaction is linked to, if any
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        title:
+          type: string
+          description: Title of the recurring transaction
+          example: Netflix subscription
+        description:
+          type: string
+          nullable: true
+          description: Optional longer description of the recurring transaction
+          example: Monthly streaming subscription
+        type:
+          $ref: '#/components/schemas/TransactionType'
+        amount:
+          type: number
+          format: double
+          description: Amount of the recurring transaction
+          example: 649
+        currency:
+          type: string
+          description: ISO 4217 currency code
+          example: INR
+        schedulePeriodType:
+          $ref: '#/components/schemas/SchedulePeriodType'
+        startDate:
+          type: string
+          format: date
+          nullable: true
+          description: Date the recurring schedule's first reminder was anchored to, if set
+          example: '2026-08-01'
+        enabled:
+          type: boolean
+          description: Whether this recurring rule is currently sending reminders
+          example: true
+        nextExecutionAt:
+          type: string
+          format: date-time
+          description: When the next reminder for this rule is due
+          example: '2026-08-01T00:00:00Z'
+    RecurringTransactionRuleListResponse:
+      allOf:
+        - $ref: '#/components/schemas/PagedResponse'
+        - type: object
+          required:
+            - data
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/RecurringTransactionRuleResponse'
+              description: Recurring transaction rules on the current page, ordered by creation date descending
+    UpdateRecurringTransactionRuleRequest:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          description: Whether the recurring rule should keep sending reminders
+          example: false
+    ReceiptUploadUrlRequest:
+      type: object
+      required:
+        - contentType
+        - contentLength
+      properties:
+        contentType:
+          type: string
+          enum:
+            - image/jpeg
+            - image/png
+          description: |
+            MIME type of the image about to be uploaded. Signed into the presigned URL, so an upload declaring a different `Content-Type` is rejected by the storage service.
+          example: image/jpeg
+        contentLength:
+          type: integer
+          format: int64
+          minimum: 1
+          maximum: 10485760
+          description: |
+            Exact size in bytes of the image about to be uploaded. Also signed into the presigned URL, so a client cannot declare a small image and then stream a large one. Capped at 10 MB.
+          example: 248312
+    ReceiptUploadUrlResponse:
+      type: object
+      properties:
+        uploadUrl:
+          type: string
+          format: uri
+          description: |
+            Short-lived presigned URL. The client uploads the image by issuing a plain `PUT` to this URL with the declared `Content-Type` and no Authorization header — the credentials are already embedded in the query string.
+          example: https://silver-receipts-dev.s3.ap-south-1.amazonaws.com/pending/7c9e6679-7425-40de-944b-e07fc1f90ae7/3f1c2d49-1b74-e5ab-c348-f72e1d09abcd.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256
+        objectKey:
+          type: string
+          maxLength: 255
+          description: |
+            Server-generated storage key the upload targets. Send this value back as `receiptKey` when creating or updating the transaction. Clients never choose this key — it is derived from the authenticated user.
+          example: pending/7c9e6679-7425-40de-944b-e07fc1f90ae7/3f1c2d49-1b74-e5ab-c348-f72e1d09abcd.jpg
+        expiresAt:
+          type: string
+          format: date-time
+          description: Timestamp after which the presigned URL is no longer valid.
+          example: '2026-08-22T07:45:00Z'
+    DevicePlatform:
+      type: string
+      enum:
+        - IOS
+        - ANDROID
+      description: Mobile OS platform the device token was issued for
+      example: IOS
+    RegisterDeviceTokenRequest:
+      type: object
+      required:
+        - expoPushToken
+        - platform
+      properties:
+        expoPushToken:
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: Expo push token obtained from `Notifications.getExpoPushTokenAsync()` on the device
+          example: ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]
+        platform:
+          $ref: '#/components/schemas/DevicePlatform'
+    DeviceTokenResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the registered device token
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        platform:
+          $ref: '#/components/schemas/DevicePlatform'
+        active:
+          type: boolean
+          description: Whether this device token is currently active and eligible to receive pushes
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the device token was first registered
+          example: '2026-06-07T10:30:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the device token was last refreshed
+          example: '2026-06-07T10:30:00Z'
+    TriggerType:
+      type: string
+      description: Category of event that fires a goal allocation rule
+      enum:
+        - SCHEDULED
+        - INCOME_RECEIVED
+        - MANUAL
+      example: SCHEDULED
+  responses:
+    UnauthorizedResponse:
+      description: Unauthorized — missing or invalid JWT token
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: 401
+            error: Unauthorized
+            message: Full authentication is required to access this resource
+    InternalServerErrorResponse:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: 500
+            error: Internal Server Error
+            message: An unexpected error occurred
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
