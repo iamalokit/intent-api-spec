@@ -106,7 +106,7 @@ get:
                 description: Monthly grocery shopping
                 createdAt: '2026-06-19T10:30:00Z'
                 updatedAt: '2026-06-19T10:30:00Z'
-              - id: b7e2d3f5-02c8-5f6b-cd45-9g83f2e10bcd
+              - id: b7e2d3f5-02c8-5f6b-cd45-9a83f2e10bcd
                 type: CREDIT
                 amount: 50000.00
                 currency: INR
