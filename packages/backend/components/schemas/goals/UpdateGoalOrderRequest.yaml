@@ -1,4 +1,5 @@
 type: object
+additionalProperties: false
 required:
   - orderings
 properties:
@@ -11,6 +12,7 @@ properties:
       validation error. Order values must be unique non-negative integers.
     items:
       type: object
+      additionalProperties: false
       required:
         - goalId
         - order

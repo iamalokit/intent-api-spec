@@ -1,4 +1,10 @@
 type: object
+additionalProperties: false
+required:
+  - id
+  - amount
+  - transactionType
+  - createdAt
 properties:
   id:
     type: string

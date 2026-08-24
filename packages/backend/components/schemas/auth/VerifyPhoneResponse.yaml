@@ -1,4 +1,9 @@
 type: object
+additionalProperties: false
+required:
+  - message
+  - token
+  - refreshToken
 properties:
   message:
     type: string

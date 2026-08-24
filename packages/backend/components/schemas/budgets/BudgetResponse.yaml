@@ -1,4 +1,20 @@
 type: object
+additionalProperties: false
+required:
+  - id
+  - name
+  - periodType
+  - amount
+  - startDate
+  - status
+  - carryoverPolicy
+  - carryoverAmount
+  - effectiveAmount
+  - createdAt
+  - spentAmount
+  - carryoverSpent
+  - updatedAt
+  - iconId
 properties:
   id:
     type: string

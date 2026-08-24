@@ -1,4 +1,18 @@
 type: object
+additionalProperties: false
+required:
+  - id
+  - accountId
+  - budgetId
+  - title
+  - description
+  - type
+  - amount
+  - currency
+  - schedulePeriodType
+  - startDate
+  - enabled
+  - nextExecutionAt
 properties:
   id:
     type: string

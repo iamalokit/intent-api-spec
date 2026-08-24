@@ -1,4 +1,19 @@
 type: object
+additionalProperties: false
+required:
+  - id
+  - accountId
+  - budgetId
+  - type
+  - amount
+  - currency
+  - title
+  - description
+  - createdAt
+  - updatedAt
+  - recurringRule
+  - receiptKey
+  - receiptUrl
 properties:
   id:
     type: string

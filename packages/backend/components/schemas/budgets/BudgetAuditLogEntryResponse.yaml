@@ -1,4 +1,12 @@
 type: object
+additionalProperties: false
+required:
+  - id
+  - budgetId
+  - field
+  - oldValue
+  - newValue
+  - changedAt
 properties:
   id:
     type: string

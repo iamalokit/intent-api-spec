@@ -1,4 +1,18 @@
 type: object
+additionalProperties: false
+required:
+  - id
+  - name
+  - targetAmount
+  - currentAmount
+  - currency
+  - targetDate
+  - notes
+  - status
+  - order
+  - createdAt
+  - allocationRule
+  - iconId
 properties:
   id:
     type: string

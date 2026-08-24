@@ -1,4 +1,11 @@
 type: object
+additionalProperties: false
+required:
+  - id
+  - platform
+  - active
+  - createdAt
+  - updatedAt
 properties:
   id:
     type: string

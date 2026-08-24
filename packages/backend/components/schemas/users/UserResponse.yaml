@@ -1,4 +1,15 @@
 type: object
+additionalProperties: false
+required:
+  - id
+  - phoneNumber
+  - active
+  - firstName
+  - lastName
+  - email
+  - timezone
+  - pushNotificationsEnabled
+  - createdAt
 properties:
   id:
     type: string

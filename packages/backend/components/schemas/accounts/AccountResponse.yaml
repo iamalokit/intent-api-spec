@@ -1,4 +1,13 @@
 type: object
+additionalProperties: false
+required:
+  - id
+  - accountName
+  - accountType
+  - currentBalance
+  - balanceSource
+  - lastSyncedAt
+  - createdAt
 properties:
   id:
     type: string

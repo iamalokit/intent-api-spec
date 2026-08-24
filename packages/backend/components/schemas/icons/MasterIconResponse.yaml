@@ -1,4 +1,14 @@
 type: object
+additionalProperties: false
+required:
+  - id
+  - key
+  - iconLibrary
+  - iconName
+  - category
+  - keywords
+  - defaultColor
+  - sortOrder
 properties:
   id:
     type: string

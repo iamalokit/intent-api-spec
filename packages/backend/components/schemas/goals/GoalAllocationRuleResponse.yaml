@@ -1,4 +1,13 @@
 type: object
+additionalProperties: false
+required:
+  - id
+  - triggerType
+  - schedulePeriodType
+  - startDate
+  - ruleType
+  - fixedAmount
+  - enabled
 properties:
   id:
     type: string

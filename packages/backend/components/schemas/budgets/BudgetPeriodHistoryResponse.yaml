@@ -1,4 +1,16 @@
 type: object
+additionalProperties: false
+required:
+  - id
+  - budgetId
+  - periodStart
+  - periodEnd
+  - budgetedAmount
+  - carryoverIn
+  - spentDuringPeriod
+  - carryoverOut
+  - lateSpentAmount
+  - closedAt
 properties:
   id:
     type: string
