@@ -8,15 +8,15 @@ properties:
     description: Name of the saving goal
     example: Emergency Fund
   targetAmount:
-    type: number
-    minimum: 1
-    description: Target amount to save
-    example: 50000
+    type: string
+    pattern: '^\d{1,15}\.\d{2}$'
+    description: Target amount to save. Must be at least 1.00. Represented as a string to avoid floating-point precision loss; always exactly 2 decimal places.
+    example: '50000.00'
   currentAmount:
-    type: number
-    minimum: 0
-    description: Amount already saved towards this goal
-    example: 12000
+    type: string
+    pattern: '^\d{1,15}\.\d{2}$'
+    description: Amount already saved towards this goal. Represented as a string to avoid floating-point precision loss; always exactly 2 decimal places.
+    example: '12000.00'
   targetDate:
     type: string
     format: date
