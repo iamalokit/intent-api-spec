@@ -27,6 +27,7 @@ properties:
     example: '2026-06-01'
   currency:
     type: string
+    pattern: '^[A-Z]{3}$'
     default: INR
     description: ISO 4217 currency code
     example: INR
