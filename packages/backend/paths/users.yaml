@@ -7,6 +7,8 @@ post:
     The phone number is extracted from the JWT token issued after OTP
     verification. Returns 409 if an account already exists for that number.
   operationId: createUser
+  parameters:
+    - $ref: '../components/parameters/IdempotencyKeyHeader.yaml'
   requestBody:
     required: false
     content:
@@ -26,18 +28,38 @@ post:
             id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
             phoneNumber: "+919876543210"
             active: true
+            firstName: Alokit
+            lastName: Jindal
+            email: user@example.com
+            timezone: Asia/Kolkata
+            pushNotificationsEnabled: true
             createdAt: '2026-06-04T10:30:00Z'
     '401':
       $ref: '../components/responses/UnauthorizedResponse.yaml'
     '409':
-      description: Conflict — account already exists for this phone number
+      description: Conflict — account already exists for this phone number, or the Idempotency-Key was reused with a different request body
       content:
         application/json:
           schema:
             $ref: '../components/schemas/common/ErrorResponse.yaml'
-          example:
-            status: 409
-            error: Conflict
-            message: An account already exists for this phone number
+          examples:
+            phoneNumberAlreadyRegistered:
+              summary: An account already exists for this phone number
+              value:
+                status: 409
+                error: Conflict
+                message: An account already exists for this phone number
+                code: PHONE_NUMBER_ALREADY_REGISTERED
+                traceId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+            idempotencyKeyReuse:
+              summary: Idempotency-Key was reused with a different request body
+              value:
+                status: 409
+                error: Conflict
+                message: This Idempotency-Key was already used with a different request body
+                code: IDEMPOTENCY_KEY_REUSE
+                traceId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+    '429':
+      $ref: '../components/responses/RateLimitExceededResponse.yaml'
     '500':
       $ref: '../components/responses/InternalServerErrorResponse.yaml'

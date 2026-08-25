@@ -28,7 +28,14 @@ get:
             periodType: MONTHLY
             amount: '10000.00'
             startDate: '2026-06-01'
+            currency: INR
             status: ACTIVE
+            carryoverPolicy: CARRY_OVER
+            carryoverAmount: '2000.00'
+            effectiveAmount: '12000.00'
+            spentAmount: '3500.00'
+            carryoverSpent: '1500.00'
+            iconId: 99429136-66ff-4b98-9335-e8edce6e9a51
             createdAt: '2026-06-14T09:00:00Z'
             updatedAt: '2026-06-14T09:00:00Z'
     '401':
@@ -43,6 +50,10 @@ get:
             status: 404
             error: Not Found
             message: Budget not found
+            code: BUDGET_NOT_FOUND
+            traceId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+    '429':
+      $ref: '../components/responses/RateLimitExceededResponse.yaml'
     '500':
       $ref: '../components/responses/InternalServerErrorResponse.yaml'
 
@@ -90,7 +101,14 @@ put:
             periodType: MONTHLY
             amount: '12000.00'
             startDate: '2026-06-01'
+            currency: INR
             status: ACTIVE
+            carryoverPolicy: CARRY_OVER
+            carryoverAmount: '2000.00'
+            effectiveAmount: '12000.00'
+            spentAmount: '3500.00'
+            carryoverSpent: '1500.00'
+            iconId: 99429136-66ff-4b98-9335-e8edce6e9a51
             createdAt: '2026-06-14T09:00:00Z'
             updatedAt: '2026-06-15T11:30:00Z'
     '400':
@@ -98,11 +116,16 @@ put:
       content:
         application/json:
           schema:
-            $ref: '../components/schemas/common/ErrorResponse.yaml'
+            $ref: '../components/schemas/common/ValidationErrorResponse.yaml'
           example:
             status: 400
             error: Bad Request
             message: amount must be greater than or equal to 1
+            code: VALIDATION_ERROR
+            traceId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+            errors:
+              - field: amount
+                message: must be greater than or equal to 1
     '401':
       $ref: '../components/responses/UnauthorizedResponse.yaml'
     '404':
@@ -115,6 +138,8 @@ put:
             status: 404
             error: Not Found
             message: Budget not found
+            code: BUDGET_NOT_FOUND
+            traceId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
     '409':
       description: Conflict — the budget is archived and read-only
       content:
@@ -125,5 +150,9 @@ put:
             status: 409
             error: Conflict
             message: Archived budgets are read-only; unarchive it first
+            code: BUDGET_ARCHIVED_CONFLICT
+            traceId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+    '429':
+      $ref: '../components/responses/RateLimitExceededResponse.yaml'
     '500':
       $ref: '../components/responses/InternalServerErrorResponse.yaml'

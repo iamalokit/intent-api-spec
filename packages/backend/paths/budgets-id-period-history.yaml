@@ -55,6 +55,7 @@ get:
                 carryoverOut: '2500.00'
                 lateSpentAmount: '350.00'
                 closedAt: '2026-06-01T00:00:00Z'
+                currency: INR
             paging:
               currentToken: eyJjcmVhdGVkQXQiOiIyMDI2LTA2LTAxVDAwOjAwOjAwWiIsImlkIjoiM2IyNDExMDEifQ==
               nextToken: null
@@ -71,5 +72,9 @@ get:
             status: 404
             error: Not Found
             message: Budget not found
+            code: BUDGET_NOT_FOUND
+            traceId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+    '429':
+      $ref: '../components/responses/RateLimitExceededResponse.yaml'
     '500':
       $ref: '../components/responses/InternalServerErrorResponse.yaml'
