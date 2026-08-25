@@ -28,7 +28,7 @@ post:
           accountId: a1b2c3d4-5678-90ab-cdef-1234567890ab
           type: DEBIT
           title: Grocery run
-          amount: 1500.00
+          amount: '1500.00'
           currency: INR
           description: Monthly grocery shopping
   responses:
@@ -43,7 +43,7 @@ post:
             accountId: a1b2c3d4-5678-90ab-cdef-1234567890ab
             budgetId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
             type: DEBIT
-            amount: 1500.00
+            amount: '1500.00'
             currency: INR
             description: Monthly grocery shopping
             createdAt: '2026-06-26T10:30:00Z'

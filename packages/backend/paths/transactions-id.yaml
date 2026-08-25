@@ -25,7 +25,7 @@ get:
           example:
             id: a3f1c2d4-91b7-4e5a-bc34-8f72e1d09abc
             type: DEBIT
-            amount: 1500.00
+            amount: '1500.00'
             currency: INR
             description: Monthly grocery shopping
             createdAt: '2026-06-19T10:30:00Z'
@@ -72,7 +72,7 @@ put:
           $ref: '../components/schemas/transactions/UpdateTransactionRequest.yaml'
         example:
           accountId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
-          amount: 2000.00
+          amount: '2000.00'
           description: Monthly grocery shopping — corrected
   responses:
     '200':
@@ -85,7 +85,7 @@ put:
             id: a3f1c2d4-91b7-4e5a-bc34-8f72e1d09abc
             accountId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
             type: DEBIT
-            amount: 2000.00
+            amount: '2000.00'
             currency: INR
             description: Monthly grocery shopping — corrected
             createdAt: '2026-06-19T10:30:00Z'

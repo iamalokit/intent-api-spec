@@ -37,7 +37,7 @@ get:
               - id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
                 accountName: HDFC Savings
                 accountType: SAVINGS
-                currentBalance: 25000.00
+                currentBalance: '25000.00'
                 balanceSource: MANUAL
                 lastSyncedAt: null
                 createdAt: '2026-06-07T10:30:00Z'
@@ -67,7 +67,7 @@ post:
         example:
           accountName: HDFC Savings
           accountType: SAVINGS
-          currentBalance: 25000.00
+          currentBalance: '25000.00'
           balanceSource: MANUAL
   responses:
     '201':
@@ -80,7 +80,7 @@ post:
             id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
             accountName: HDFC Savings
             accountType: SAVINGS
-            currentBalance: 25000.00
+            currentBalance: '25000.00'
             balanceSource: MANUAL
             lastSyncedAt: null
             createdAt: '2026-06-07T10:30:00Z'

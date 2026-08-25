@@ -87,7 +87,7 @@ get:
               - id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
                 name: Groceries
                 periodType: MONTHLY
-                amount: 10000.00
+                amount: '10000.00'
                 startDate: '2026-06-01'
                 status: ACTIVE
                 createdAt: '2026-06-14T09:00:00Z'
@@ -118,7 +118,7 @@ post:
         example:
           name: Groceries
           periodType: MONTHLY
-          amount: 10000.00
+          amount: '10000.00'
           startDate: '2026-06-01'
   responses:
     '201':
@@ -131,7 +131,7 @@ post:
             id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
             name: Groceries
             periodType: MONTHLY
-            amount: 10000.00
+            amount: '10000.00'
             startDate: '2026-06-01'
             status: ACTIVE
             createdAt: '2026-06-14T09:00:00Z'
