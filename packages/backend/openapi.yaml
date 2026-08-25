@@ -2,7 +2,16 @@ openapi: 3.0.3
 info:
   title: Silver Backend Service
   version: 0.0.1
-  description: API documentation for the Silver Backend Service
+  description: >
+    API documentation for the Silver Backend Service.
+
+
+    Ownership mismatches — a resource that exists but belongs to a different
+    user — are deliberately reported as `404 Not Found` rather than
+    `403 Forbidden`, so a non-owner cannot distinguish between a resource
+    that doesn't exist and one they simply lack access to. `403 Forbidden`
+    is reserved and unused today, held for if/when role-based sharing
+    between users is introduced.
   license:
     name: Proprietary - All Rights Reserved
 
@@ -31,55 +40,57 @@ tags:
     description: Push notification device token registration
 
 paths:
-  /api/v1/users:
+  /api/v2/users:
     $ref: './paths/users.yaml'
-  /api/v1/users/me:
+  /api/v2/users/me:
     $ref: './paths/users-me.yaml'
-  /api/v1/accounts:
+  /api/v2/accounts:
     $ref: './paths/accounts.yaml'
-  /api/v1/accounts/{accountId}:
+  /api/v2/accounts/{accountId}:
     $ref: './paths/accounts-id.yaml'
-  /api/v1/goals:
+  /api/v2/goals:
     $ref: './paths/goals.yaml'
-  /api/v1/goals/{goalId}:
+  /api/v2/goals/{goalId}:
     $ref: './paths/goals-id.yaml'
-  /api/v1/goals/order:
+  /api/v2/goals/order:
     $ref: './paths/goals-order.yaml'
-  /api/v1/goals/{goalId}/transactions:
+  /api/v2/goals/{goalId}/transactions:
     $ref: './paths/goals-id-transactions.yaml'
-  /api/v1/budgets:
+  /api/v2/budgets:
     $ref: './paths/budgets.yaml'
-  /api/v1/budgets/{budgetId}:
+  /api/v2/budgets/{budgetId}:
     $ref: './paths/budgets-id.yaml'
-  /api/v1/budgets/{budgetId}/transactions:
+  /api/v2/budgets/{budgetId}/transactions:
     $ref: './paths/budgets-id-transactions.yaml'
-  /api/v1/budgets/{budgetId}/audit-log:
+  /api/v2/budgets/{budgetId}/audit-log:
     $ref: './paths/budgets-id-audit-log.yaml'
-  /api/v1/budgets/{budgetId}/period-history:
+  /api/v2/budgets/{budgetId}/period-history:
     $ref: './paths/budgets-id-period-history.yaml'
-  /api/v1/icons:
+  /api/v2/icons:
     $ref: './paths/icons.yaml'
-  /api/v1/transactions:
+  /api/v2/transactions:
     $ref: './paths/transactions.yaml'
-  /api/v1/transactions/titles:
+  /api/v2/transactions/titles:
     $ref: './paths/transactions-titles.yaml'
-  /api/v1/transactions/receipt-upload-url:
+  /api/v2/transactions/descriptions:
+    $ref: './paths/transactions-descriptions.yaml'
+  /api/v2/transactions/receipt-upload-url:
     $ref: './paths/transactions-receipt-upload-url.yaml'
-  /api/v1/transactions/{transactionId}:
+  /api/v2/transactions/{transactionId}:
     $ref: './paths/transactions-id.yaml'
-  /api/v1/recurring-transaction-rules:
+  /api/v2/recurring-transaction-rules:
     $ref: './paths/recurring-transaction-rules.yaml'
-  /api/v1/recurring-transaction-rules/{ruleId}:
+  /api/v2/recurring-transaction-rules/{ruleId}:
     $ref: './paths/recurring-transaction-rules-id.yaml'
-  /api/v1/scheduler/trigger:
+  /api/v2/scheduler/trigger:
     $ref: './paths/scheduler-trigger.yaml'
-  /api/v1/notifications/device-tokens:
+  /api/v2/notifications/device-tokens:
     $ref: './paths/notifications-device-tokens.yaml'
-  /api/v1/auth/verify-phone:
+  /api/v2/auth/verify-phone:
     $ref: './paths/auth/verify-phone.yaml'
-  /api/v1/auth/sign-out:
+  /api/v2/auth/sign-out:
     $ref: './paths/auth/sign-out.yaml'
-  /api/v1/auth/refresh:
+  /api/v2/auth/refresh:
     $ref: './paths/auth/refresh.yaml'
 
 components:
