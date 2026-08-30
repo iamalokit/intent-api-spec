@@ -1,6 +1,6 @@
 {
   "name": "@silver/backend-api",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "OpenAPI specification for Silver Backend Service",
   "files": [
     "dist/openapi.yaml"

@@ -1,0 +1,43 @@
+type: object
+description: >
+  A suggested budget to categorise a draft DEBIT transaction under, computed
+  from the user's own past categorisations (a learned rule) or, failing that,
+  a keyword match against the user's active budgets. When nothing matches,
+  `source` is `NONE` and `budgetId` is null.
+properties:
+  budgetId:
+    type: string
+    format: uuid
+    nullable: true
+    description: Suggested budget to categorise the transaction under, or null when nothing matched.
+    example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+  budgetName:
+    type: string
+    nullable: true
+    description: >
+      Name of the suggested budget, so the client can render the suggestion
+      without a separate lookup. Null when nothing matched.
+    example: Groceries
+  autoApply:
+    type: boolean
+    description: >
+      When true, the match came from a rule the user themselves established by a
+      past categorisation of the same merchant, and the client may set the
+      budget silently (showing a reversible "auto-categorised" indicator). When
+      false, the client should offer the suggestion as a tap-to-accept chip.
+    example: true
+  source:
+    type: string
+    enum:
+      - LEARNED_RULE
+      - KEYWORD
+      - NONE
+    description: >
+      Provenance of the suggestion. `LEARNED_RULE` — a rule learned from the
+      user's past categorisations. `KEYWORD` — a keyword match against the
+      user's active budgets and their icons. `NONE` — no suggestion (blank
+      title, non-DEBIT type, or nothing scored).
+    example: LEARNED_RULE
+required:
+  - autoApply
+  - source
