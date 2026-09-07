@@ -76,6 +76,8 @@ paths:
     $ref: './paths/transactions-descriptions.yaml'
   /api/v2/transactions/receipt-upload-url:
     $ref: './paths/transactions-receipt-upload-url.yaml'
+  /api/v2/transactions/category-suggestion:
+    $ref: './paths/transactions-category-suggestion.yaml'
   /api/v2/transactions/{transactionId}:
     $ref: './paths/transactions-id.yaml'
   /api/v2/recurring-transaction-rules:
@@ -203,6 +205,8 @@ components:
       $ref: './components/schemas/transactions/TransactionListResponse.yaml'
     UpdateTransactionRequest:
       $ref: './components/schemas/transactions/UpdateTransactionRequest.yaml'
+    TransactionCategorySuggestionResponse:
+      $ref: './components/schemas/transactions/TransactionCategorySuggestionResponse.yaml'
     RecurringTransactionRuleRequest:
       $ref: './components/schemas/transactions/RecurringTransactionRuleRequest.yaml'
     RecurringTransactionRuleResponse:

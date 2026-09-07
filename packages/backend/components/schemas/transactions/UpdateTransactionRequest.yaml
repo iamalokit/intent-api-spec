@@ -26,6 +26,17 @@ properties:
     format: date
     description: Corrected date when the transaction occurred (YYYY-MM-DD).
     example: '2026-06-27'
+  budgetId:
+    type: string
+    format: uuid
+    nullable: true
+    description: >
+      Budget to categorise this DEBIT transaction under, treated as a full
+      replacement (consistent with `receiptKey`): supply a budget id to
+      (re)categorise the transaction, or send `null`/omit the field to leave it
+      uncategorised. Ignored for CREDIT transactions. A 409 is returned if the
+      referenced budget is archived.
+    example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
   receiptKey:
     type: string
     maxLength: 255

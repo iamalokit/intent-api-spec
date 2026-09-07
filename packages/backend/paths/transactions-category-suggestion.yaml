@@ -1,0 +1,51 @@
+get:
+  tags:
+    - Transactions
+  summary: Suggest a budget for a draft transaction
+  description: >
+    Given a draft transaction title, returns the best budget to categorise a
+    DEBIT transaction under: either a confident match learned from the user's
+    own past categorisations (`autoApply` true), or a weaker keyword-based guess
+    against the user's active budgets (`autoApply` false). Returns `source`
+    `NONE` with a null `budgetId` when nothing matches, the title is blank or
+    omitted, or the type is not `DEBIT`. Intended to be polled (debounced) as
+    the user types in the New Transaction form.
+  operationId: suggestTransactionCategory
+  parameters:
+    - name: title
+      in: query
+      required: false
+      description: >
+        Draft transaction title. A blank or omitted title yields `source` `NONE`.
+      schema:
+        type: string
+        maxLength: 50
+      example: Swiggy
+    - name: type
+      in: query
+      required: false
+      description: Draft transaction type. Suggestions are only produced for `DEBIT`.
+      schema:
+        type: string
+        enum:
+          - CREDIT
+          - DEBIT
+        default: DEBIT
+  responses:
+    '200':
+      description: >
+        Suggestion computed. Always returns a body — inspect `source` and
+        `budgetId` to tell a match from "nothing matched".
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/transactions/TransactionCategorySuggestionResponse.yaml'
+          example:
+            budgetId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+            budgetName: Groceries
+            autoApply: true
+            source: LEARNED_RULE
+    '401':
+      $ref: '../components/responses/UnauthorizedResponse.yaml'
+    '500':
+      $ref: '../components/responses/InternalServerErrorResponse.yaml'

@@ -50,10 +50,13 @@ put:
     - Transactions
   summary: Update a transaction by ID
   description: >
-    Partially updates a transaction. Only `accountId`, `amount`, and `description`
-    can be updated — `type` and `currency` are immutable after creation. Only fields
-    included in the request body are applied. Returns 404 if the transaction
-    does not exist or does not belong to the authenticated user.
+    Partially updates a transaction. `accountId`, `amount`, `title`,
+    `description`, and `transactionDate` are applied only when present in the
+    request body; `type` and `currency` are immutable after creation. `budgetId`
+    and `receiptKey` are treated as full replacements — supply a value to set it,
+    or send `null`/omit the field to clear it. Returns 404 if the transaction
+    does not exist or does not belong to the authenticated user, and 409 if a
+    referenced budget is archived.
   operationId: updateTransaction
   parameters:
     - name: transactionId
@@ -112,6 +115,16 @@ put:
             status: 404
             error: Not Found
             message: Transaction not found
+    '409':
+      description: The referenced budget is archived
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/common/ErrorResponse.yaml'
+          example:
+            status: 409
+            error: Conflict
+            message: Archived budgets are read-only; unarchive it first
     '500':
       $ref: '../components/responses/InternalServerErrorResponse.yaml'
 
