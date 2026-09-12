@@ -1,13 +1,4 @@
 type: object
-additionalProperties: false
-required:
-  - id
-  - accountName
-  - accountType
-  - currentBalance
-  - balanceSource
-  - lastSyncedAt
-  - createdAt
 properties:
   id:
     type: string
@@ -21,17 +12,16 @@ properties:
   accountType:
     $ref: './AccountType.yaml'
   currentBalance:
-    type: string
-    pattern: '^\d{1,15}\.\d{2}$'
+    type: number
+    format: double
     nullable: true
-    description: Current balance of the account. Represented as a string to avoid floating-point precision loss; always exactly 2 decimal places.
-    example: '25000.00'
+    description: Current balance of the account
+    example: 25000.00
   balanceSource:
-    allOf:
-      - $ref: './BalanceSource.yaml'
     type: string
     nullable: true
     description: How the balance was obtained
+    example: MANUAL
   lastSyncedAt:
     type: string
     format: date-time

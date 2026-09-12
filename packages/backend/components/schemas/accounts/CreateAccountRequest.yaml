@@ -1,5 +1,4 @@
 type: object
-additionalProperties: false
 required:
   - accountName
   - accountType
@@ -13,9 +12,12 @@ properties:
   accountType:
     $ref: './AccountType.yaml'
   currentBalance:
-    type: string
-    pattern: '^\d{1,15}\.\d{2}$'
-    description: Known balance at time of creation. Omit if unknown. Represented as a string to avoid floating-point precision loss; always exactly 2 decimal places.
-    example: '25000.00'
+    type: number
+    format: double
+    description: Known balance at time of creation. Omit if unknown.
+    example: 25000.00
   balanceSource:
-    $ref: './BalanceSource.yaml'
+    type: string
+    enum: [MANUAL, BANK_SYNC]
+    description: How the balance was obtained. Required when currentBalance is provided.
+    example: MANUAL

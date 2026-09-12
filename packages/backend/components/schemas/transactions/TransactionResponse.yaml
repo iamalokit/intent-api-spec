@@ -1,19 +1,4 @@
 type: object
-additionalProperties: false
-required:
-  - id
-  - accountId
-  - budgetId
-  - type
-  - amount
-  - currency
-  - title
-  - description
-  - createdAt
-  - updatedAt
-  - recurringRule
-  - receiptKey
-  - receiptUrl
 properties:
   id:
     type: string
@@ -28,16 +13,15 @@ properties:
   budgetId:
     type: string
     format: uuid
-    nullable: true
     description: ID of the budget this transaction is categorised under, if any
     example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
   type:
     $ref: './TransactionType.yaml'
   amount:
-    type: string
-    pattern: '^\d{1,15}\.\d{2}$'
-    description: Transaction amount. Represented as a string to avoid floating-point precision loss; always exactly 2 decimal places.
-    example: '1500.00'
+    type: number
+    format: double
+    description: Transaction amount
+    example: 1500.00
   currency:
     type: string
     description: ISO 4217 currency code
@@ -49,7 +33,6 @@ properties:
     example: Grocery run
   description:
     type: string
-    nullable: true
     description: Optional note or label for the transaction
     example: Monthly grocery shopping
   createdAt:

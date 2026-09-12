@@ -37,7 +37,7 @@ get:
               - id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
                 accountName: HDFC Savings
                 accountType: SAVINGS
-                currentBalance: '25000.00'
+                currentBalance: 25000.00
                 balanceSource: MANUAL
                 lastSyncedAt: null
                 createdAt: '2026-06-07T10:30:00Z'
@@ -47,8 +47,6 @@ get:
               previousToken: null
     '401':
       $ref: '../components/responses/UnauthorizedResponse.yaml'
-    '429':
-      $ref: '../components/responses/RateLimitExceededResponse.yaml'
     '500':
       $ref: '../components/responses/InternalServerErrorResponse.yaml'
 
@@ -60,8 +58,6 @@ post:
     Links a financial account to the authenticated user. The account starts
     with the provided balance (or no balance if omitted) and the given account type.
   operationId: createAccount
-  parameters:
-    - $ref: '../components/parameters/IdempotencyKeyHeader.yaml'
   requestBody:
     required: true
     content:
@@ -71,7 +67,7 @@ post:
         example:
           accountName: HDFC Savings
           accountType: SAVINGS
-          currentBalance: '25000.00'
+          currentBalance: 25000.00
           balanceSource: MANUAL
   responses:
     '201':
@@ -84,7 +80,7 @@ post:
             id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
             accountName: HDFC Savings
             accountType: SAVINGS
-            currentBalance: '25000.00'
+            currentBalance: 25000.00
             balanceSource: MANUAL
             lastSyncedAt: null
             createdAt: '2026-06-07T10:30:00Z'
@@ -93,31 +89,12 @@ post:
       content:
         application/json:
           schema:
-            $ref: '../components/schemas/common/ValidationErrorResponse.yaml'
+            $ref: '../components/schemas/common/ErrorResponse.yaml'
           example:
             status: 400
             error: Bad Request
             message: accountName must not be blank
-            code: VALIDATION_ERROR
-            traceId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
-            errors:
-              - field: accountName
-                message: must not be blank
     '401':
       $ref: '../components/responses/UnauthorizedResponse.yaml'
-    '409':
-      description: Conflict — the Idempotency-Key was reused with a different request body
-      content:
-        application/json:
-          schema:
-            $ref: '../components/schemas/common/ErrorResponse.yaml'
-          example:
-            status: 409
-            error: Conflict
-            message: This Idempotency-Key was already used with a different request body
-            code: IDEMPOTENCY_KEY_REUSE
-            traceId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
-    '429':
-      $ref: '../components/responses/RateLimitExceededResponse.yaml'
     '500':
       $ref: '../components/responses/InternalServerErrorResponse.yaml'

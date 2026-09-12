@@ -1,5 +1,4 @@
 type: object
-additionalProperties: false
 required:
   - triggerType
   - ruleType
@@ -22,10 +21,11 @@ properties:
     description: Type of allocation calculation (e.g. FIXED_AMOUNT)
     example: FIXED_AMOUNT
   fixedAmount:
-    type: string
-    pattern: '^\d{1,15}\.\d{2}$'
-    description: Fixed amount to allocate (required when ruleType is FIXED_AMOUNT). Represented as a string to avoid floating-point precision loss; always exactly 2 decimal places.
-    example: '5000.00'
+    type: number
+    format: double
+    minimum: 0
+    description: Fixed amount to allocate (required when ruleType is FIXED_AMOUNT)
+    example: 5000.00
   enabled:
     type: boolean
     default: true

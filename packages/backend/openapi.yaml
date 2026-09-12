@@ -2,16 +2,7 @@ openapi: 3.0.3
 info:
   title: Silver Backend Service
   version: 0.0.1
-  description: >
-    API documentation for the Silver Backend Service.
-
-
-    Ownership mismatches — a resource that exists but belongs to a different
-    user — are deliberately reported as `404 Not Found` rather than
-    `403 Forbidden`, so a non-owner cannot distinguish between a resource
-    that doesn't exist and one they simply lack access to. `403 Forbidden`
-    is reserved and unused today, held for if/when role-based sharing
-    between users is introduced.
+  description: API documentation for the Silver Backend Service
   license:
     name: Proprietary - All Rights Reserved
 
@@ -40,59 +31,57 @@ tags:
     description: Push notification device token registration
 
 paths:
-  /api/v2/users:
+  /api/v1/users:
     $ref: './paths/users.yaml'
-  /api/v2/users/me:
+  /api/v1/users/me:
     $ref: './paths/users-me.yaml'
-  /api/v2/accounts:
+  /api/v1/accounts:
     $ref: './paths/accounts.yaml'
-  /api/v2/accounts/{accountId}:
+  /api/v1/accounts/{accountId}:
     $ref: './paths/accounts-id.yaml'
-  /api/v2/goals:
+  /api/v1/goals:
     $ref: './paths/goals.yaml'
-  /api/v2/goals/{goalId}:
+  /api/v1/goals/{goalId}:
     $ref: './paths/goals-id.yaml'
-  /api/v2/goals/order:
+  /api/v1/goals/order:
     $ref: './paths/goals-order.yaml'
-  /api/v2/goals/{goalId}/transactions:
+  /api/v1/goals/{goalId}/transactions:
     $ref: './paths/goals-id-transactions.yaml'
-  /api/v2/budgets:
+  /api/v1/budgets:
     $ref: './paths/budgets.yaml'
-  /api/v2/budgets/{budgetId}:
+  /api/v1/budgets/{budgetId}:
     $ref: './paths/budgets-id.yaml'
-  /api/v2/budgets/{budgetId}/transactions:
+  /api/v1/budgets/{budgetId}/transactions:
     $ref: './paths/budgets-id-transactions.yaml'
-  /api/v2/budgets/{budgetId}/audit-log:
+  /api/v1/budgets/{budgetId}/audit-log:
     $ref: './paths/budgets-id-audit-log.yaml'
-  /api/v2/budgets/{budgetId}/period-history:
+  /api/v1/budgets/{budgetId}/period-history:
     $ref: './paths/budgets-id-period-history.yaml'
-  /api/v2/icons:
+  /api/v1/icons:
     $ref: './paths/icons.yaml'
-  /api/v2/transactions:
+  /api/v1/transactions:
     $ref: './paths/transactions.yaml'
-  /api/v2/transactions/titles:
+  /api/v1/transactions/titles:
     $ref: './paths/transactions-titles.yaml'
-  /api/v2/transactions/descriptions:
-    $ref: './paths/transactions-descriptions.yaml'
-  /api/v2/transactions/receipt-upload-url:
+  /api/v1/transactions/receipt-upload-url:
     $ref: './paths/transactions-receipt-upload-url.yaml'
-  /api/v2/transactions/category-suggestion:
+  /api/v1/transactions/category-suggestion:
     $ref: './paths/transactions-category-suggestion.yaml'
-  /api/v2/transactions/{transactionId}:
+  /api/v1/transactions/{transactionId}:
     $ref: './paths/transactions-id.yaml'
-  /api/v2/recurring-transaction-rules:
+  /api/v1/recurring-transaction-rules:
     $ref: './paths/recurring-transaction-rules.yaml'
-  /api/v2/recurring-transaction-rules/{ruleId}:
+  /api/v1/recurring-transaction-rules/{ruleId}:
     $ref: './paths/recurring-transaction-rules-id.yaml'
-  /api/v2/scheduler/trigger:
+  /api/v1/scheduler/trigger:
     $ref: './paths/scheduler-trigger.yaml'
-  /api/v2/notifications/device-tokens:
+  /api/v1/notifications/device-tokens:
     $ref: './paths/notifications-device-tokens.yaml'
-  /api/v2/auth/verify-phone:
+  /api/v1/auth/verify-phone:
     $ref: './paths/auth/verify-phone.yaml'
-  /api/v2/auth/sign-out:
+  /api/v1/auth/sign-out:
     $ref: './paths/auth/sign-out.yaml'
-  /api/v2/auth/refresh:
+  /api/v1/auth/refresh:
     $ref: './paths/auth/refresh.yaml'
 
 components:
@@ -100,10 +89,6 @@ components:
     # Common — reusable across services
     ErrorResponse:
       $ref: './components/schemas/common/ErrorResponse.yaml'
-    ValidationErrorItem:
-      $ref: './components/schemas/common/ValidationErrorItem.yaml'
-    ValidationErrorResponse:
-      $ref: './components/schemas/common/ValidationErrorResponse.yaml'
     PageInfo:
       $ref: './components/schemas/common/PageInfo.yaml'
     PagedResponse:
@@ -131,8 +116,6 @@ components:
     # Accounts
     AccountType:
       $ref: './components/schemas/accounts/AccountType.yaml'
-    BalanceSource:
-      $ref: './components/schemas/accounts/BalanceSource.yaml'
     CreateAccountRequest:
       $ref: './components/schemas/accounts/CreateAccountRequest.yaml'
     AccountResponse:
@@ -232,11 +215,6 @@ components:
       $ref: './components/responses/UnauthorizedResponse.yaml'
     InternalServerErrorResponse:
       $ref: './components/responses/InternalServerErrorResponse.yaml'
-    RateLimitExceededResponse:
-      $ref: './components/responses/RateLimitExceededResponse.yaml'
-  parameters:
-    IdempotencyKeyHeader:
-      $ref: './components/parameters/IdempotencyKeyHeader.yaml'
   securitySchemes:
     bearerAuth:
       type: http

@@ -1,21 +1,4 @@
 type: object
-additionalProperties: false
-required:
-  - id
-  - name
-  - periodType
-  - amount
-  - startDate
-  - status
-  - carryoverPolicy
-  - carryoverAmount
-  - effectiveAmount
-  - createdAt
-  - spentAmount
-  - carryoverSpent
-  - updatedAt
-  - iconId
-  - currency
 properties:
   id:
     type: string
@@ -29,49 +12,44 @@ properties:
   periodType:
     $ref: './BudgetPeriodType.yaml'
   amount:
-    type: string
-    pattern: '^\d{1,15}\.\d{2}$'
-    description: Maximum spend allowed for the period. Represented as a string to avoid floating-point precision loss; always exactly 2 decimal places.
-    example: '10000.00'
+    type: number
+    format: double
+    description: Maximum spend allowed for the period
+    example: 10000.00
   startDate:
     type: string
     format: date
     description: Date from which the first budget period begins
     example: '2026-06-01'
-  currency:
-    type: string
-    default: INR
-    description: ISO 4217 currency code
-    example: INR
   status:
     $ref: './BudgetStatus.yaml'
   carryoverPolicy:
     $ref: './BudgetCarryoverPolicy.yaml'
   carryoverAmount:
-    type: string
-    pattern: '^\d{1,15}\.\d{2}$'
-    description: Accumulated unspent balance carried forward from previous periods. Represented as a string to avoid floating-point precision loss; always exactly 2 decimal places.
-    example: '2000.00'
+    type: number
+    format: double
+    description: Accumulated unspent balance carried forward from previous periods
+    example: 2000.00
   effectiveAmount:
-    type: string
-    pattern: '^\d{1,15}\.\d{2}$'
-    description: Effective budget limit for the current period (amount + carryoverAmount). Represented as a string to avoid floating-point precision loss; always exactly 2 decimal places.
-    example: '12000.00'
+    type: number
+    format: double
+    description: Effective budget limit for the current period (amount + carryoverAmount)
+    example: 12000.00
   createdAt:
     type: string
     format: date-time
     description: Timestamp when the budget was created
     example: '2026-06-14T09:00:00Z'
   spentAmount:
-    type: string
-    pattern: '^\d{1,15}\.\d{2}$'
-    description: Total DEBIT amount spent against this budget. Represented as a string to avoid floating-point precision loss; always exactly 2 decimal places.
-    example: '3500.00'
+    type: number
+    format: double
+    description: Total DEBIT amount spent against this budget
+    example: 3500.00
   carryoverSpent:
-    type: string
-    pattern: '^\d{1,15}\.\d{2}$'
-    description: Portion of carryoverAmount spent so far in the current period (min(spentAmount, carryoverAmount)). Represented as a string to avoid floating-point precision loss; always exactly 2 decimal places.
-    example: '1500.00'
+    type: number
+    format: double
+    description: Portion of carryoverAmount spent so far in the current period (min(spentAmount, carryoverAmount))
+    example: 1500.00
   updatedAt:
     type: string
     format: date-time

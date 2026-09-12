@@ -1,9 +1,4 @@
 type: object
-additionalProperties: false
-required:
-  - uploadUrl
-  - objectKey
-  - expiresAt
 properties:
   uploadUrl:
     type: string

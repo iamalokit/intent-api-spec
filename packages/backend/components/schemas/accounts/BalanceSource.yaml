@@ -1,4 +1,0 @@
-type: string
-enum: [MANUAL, BANK_SYNC]
-description: How an account's balance is obtained and kept up to date
-example: MANUAL

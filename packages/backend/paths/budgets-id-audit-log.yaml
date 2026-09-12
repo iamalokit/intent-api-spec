@@ -65,9 +65,5 @@ get:
             status: 404
             error: Not Found
             message: Budget not found
-            code: BUDGET_NOT_FOUND
-            traceId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
-    '429':
-      $ref: '../components/responses/RateLimitExceededResponse.yaml'
     '500':
       $ref: '../components/responses/InternalServerErrorResponse.yaml'

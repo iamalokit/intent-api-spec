@@ -13,15 +13,14 @@ rules:
   info-license-strict: off
 
 apis:
-  v1-frozen:
-    root: ./archive/v1/openapi.yaml
-  v2:
+  silver-api@v1:
     root: ./openapi.yaml
 
-openapi:
-  showConsole: true
-  generateCodeSamples:
-    languages:
-      - lang: curl
-      - lang: JavaScript
-      - lang: Java
+theme:
+  openapi:
+    showConsole: true
+    generateCodeSamples:
+      languages:
+        - lang: curl
+        - lang: JavaScript
+        - lang: Java

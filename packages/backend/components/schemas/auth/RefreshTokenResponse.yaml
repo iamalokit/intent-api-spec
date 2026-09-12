@@ -1,8 +1,4 @@
 type: object
-additionalProperties: false
-required:
-  - token
-  - refreshToken
 properties:
   token:
     type: string

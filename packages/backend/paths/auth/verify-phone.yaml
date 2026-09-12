@@ -26,8 +26,6 @@ post:
             $ref: '../../components/schemas/auth/VerifyPhoneResponse.yaml'
           example:
             message: Phone verified successfully
-            token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-            refreshToken: "550e8400-e29b-41d4-a716-446655440000"
     '401':
       description: Invalid or expired Firebase ID token
       content:
@@ -38,9 +36,5 @@ post:
             status: 401
             error: Unauthorized
             message: Invalid or expired phone verification token.
-            code: UNAUTHENTICATED
-            traceId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
-    '429':
-      $ref: '../../components/responses/RateLimitExceededResponse.yaml'
     '500':
       $ref: '../../components/responses/InternalServerErrorResponse.yaml'

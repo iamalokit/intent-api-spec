@@ -1,18 +1,4 @@
 type: object
-additionalProperties: false
-required:
-  - id
-  - accountId
-  - budgetId
-  - title
-  - description
-  - type
-  - amount
-  - currency
-  - schedulePeriodType
-  - startDate
-  - enabled
-  - nextExecutionAt
 properties:
   id:
     type: string
@@ -42,10 +28,10 @@ properties:
   type:
     $ref: '../transactions/TransactionType.yaml'
   amount:
-    type: string
-    pattern: '^\d{1,15}\.\d{2}$'
-    description: Amount of the recurring transaction. Represented as a string to avoid floating-point precision loss; always exactly 2 decimal places.
-    example: '649.00'
+    type: number
+    format: double
+    description: Amount of the recurring transaction
+    example: 649.00
   currency:
     type: string
     description: ISO 4217 currency code

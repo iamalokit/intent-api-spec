@@ -101,14 +101,14 @@ get:
             data:
               - id: a3f1c2d4-91b7-4e5a-bc34-8f72e1d09abc
                 type: DEBIT
-                amount: '1500.00'
+                amount: 1500.00
                 currency: INR
                 description: Monthly grocery shopping
                 createdAt: '2026-06-19T10:30:00Z'
                 updatedAt: '2026-06-19T10:30:00Z'
-              - id: b7e2d3f5-02c8-5f6b-cd45-9a83f2e10bcd
+              - id: b7e2d3f5-02c8-5f6b-cd45-9g83f2e10bcd
                 type: CREDIT
-                amount: '50000.00'
+                amount: 50000.00
                 currency: INR
                 description: June salary
                 createdAt: '2026-06-01T09:00:00Z'
@@ -150,7 +150,7 @@ post:
           accountId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
           type: DEBIT
           title: Grocery run
-          amount: '1500.00'
+          amount: 1500.00
           currency: INR
           description: Monthly grocery shopping
   responses:
@@ -163,7 +163,7 @@ post:
           example:
             id: a3f1c2d4-91b7-4e5a-bc34-8f72e1d09abc
             type: DEBIT
-            amount: '1500.00'
+            amount: 1500.00
             currency: INR
             description: Monthly grocery shopping
             createdAt: '2026-06-19T10:30:00Z'

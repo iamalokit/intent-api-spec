@@ -7,5 +7,3 @@ content:
       status: 401
       error: Unauthorized
       message: Full authentication is required to access this resource
-      code: UNAUTHENTICATED
-      traceId: 7c9e6679-7425-40de-944b-e07fc1f90ae7

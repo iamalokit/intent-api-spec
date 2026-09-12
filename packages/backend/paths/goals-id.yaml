@@ -25,8 +25,8 @@ get:
           example:
             id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
             name: Emergency Fund
-            targetAmount: '50000.00'
-            currentAmount: '12000.00'
+            targetAmount: 50000.00
+            currentAmount: 12000.00
             currency: INR
             targetDate: '2026-12-31'
             notes: 6 months of living expenses

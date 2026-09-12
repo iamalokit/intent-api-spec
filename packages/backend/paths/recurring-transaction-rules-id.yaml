@@ -29,7 +29,7 @@ get:
             title: Netflix subscription
             description: Monthly streaming subscription
             type: DEBIT
-            amount: '649.00'
+            amount: 649.00
             currency: INR
             schedulePeriodType: MONTHLY
             startDate: '2026-08-01'

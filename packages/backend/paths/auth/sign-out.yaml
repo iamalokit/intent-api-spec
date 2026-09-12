@@ -20,7 +20,5 @@ post:
       description: Signed out successfully
     '401':
       $ref: '../../components/responses/UnauthorizedResponse.yaml'
-    '429':
-      $ref: '../../components/responses/RateLimitExceededResponse.yaml'
     '500':
       $ref: '../../components/responses/InternalServerErrorResponse.yaml'

@@ -1,5 +1,4 @@
 type: object
-additionalProperties: false
 properties:
   accountId:
     type: string
@@ -7,10 +6,11 @@ properties:
     description: ID of the account to reassign this transaction to
     example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
   amount:
-    type: string
-    pattern: '^\d{1,15}\.\d{2}$'
-    description: Corrected transaction amount. Must be at least 0.01. Represented as a string to avoid floating-point precision loss; always exactly 2 decimal places.
-    example: '2000.00'
+    type: number
+    format: double
+    minimum: 0.01
+    description: Corrected transaction amount
+    example: 2000.00
   title:
     type: string
     maxLength: 50

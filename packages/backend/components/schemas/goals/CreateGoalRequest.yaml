@@ -1,5 +1,4 @@
 type: object
-additionalProperties: false
 required:
   - name
   - targetAmount
@@ -11,10 +10,11 @@ properties:
     description: Name of the saving goal
     example: Emergency Fund
   targetAmount:
-    type: string
-    pattern: '^\d{1,15}\.\d{2}$'
-    description: Target amount to save. Must be at least 1.00. Represented as a string to avoid floating-point precision loss; always exactly 2 decimal places.
-    example: '50000.00'
+    type: number
+    format: double
+    minimum: 1
+    description: Target amount to save
+    example: 50000.00
   currency:
     type: string
     pattern: '^[A-Z]{3}$'
@@ -22,14 +22,12 @@ properties:
     description: ISO 4217 currency code
     example: INR
   currentAmount:
-    type: string
-    pattern: '^\d{1,15}\.\d{2}$'
+    type: number
+    minimum: 0
     description: >-
       Optional initial amount already saved towards this goal. Deducted from the
-      user's unallocated account balance, same as a manual deposit. Represented
-      as a string to avoid floating-point precision loss; always exactly 2
-      decimal places.
-    example: '5000.00'
+      user's unallocated account balance, same as a manual deposit.
+    example: 5000
   targetDate:
     type: string
     format: date

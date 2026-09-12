@@ -1,18 +1,4 @@
 type: object
-additionalProperties: false
-required:
-  - id
-  - name
-  - targetAmount
-  - currentAmount
-  - currency
-  - targetDate
-  - notes
-  - status
-  - order
-  - createdAt
-  - allocationRule
-  - iconId
 properties:
   id:
     type: string
@@ -24,15 +10,15 @@ properties:
     description: Name of the saving goal
     example: Emergency Fund
   targetAmount:
-    type: string
-    pattern: '^\d{1,15}\.\d{2}$'
-    description: Target amount to save. Represented as a string to avoid floating-point precision loss; always exactly 2 decimal places.
-    example: '50000.00'
+    type: number
+    format: double
+    description: Target amount to save
+    example: 50000.00
   currentAmount:
-    type: string
-    pattern: '^\d{1,15}\.\d{2}$'
-    description: Amount saved so far. Represented as a string to avoid floating-point precision loss; always exactly 2 decimal places.
-    example: '0.00'
+    type: number
+    format: double
+    description: Amount saved so far
+    example: 0.00
   currency:
     type: string
     description: ISO 4217 currency code
